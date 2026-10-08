@@ -123,7 +123,7 @@ export function itemStatus(item: Item): string {
 // --- Chat: check-in, recordatorios y catch-up (F3) ---
 
 export const CHECKIN_EMPTY = "Hoy no quedó nada pendiente. Todo en orden.";
-export const RULE_OF_THREE = "Ya se recorrió 3 veces. Fecha dura o se va.";
+export const RULE_OF_THREE = "<b>Ya se recorrió 3 veces.</b> Fecha dura o se va.";
 
 function dueRelative(dueDay: number, today: number): string {
   if (dueDay === today) return "vencía hoy";
@@ -332,6 +332,37 @@ export const UI = {
     undated: "Sin fecha",
     raw: "Lo tenemos. Lo ordenamos después.",
     empty: "Todo despejado.",
+  },
+  history: {
+    title: "¿Qué ha ocurrido?",
+    concept: "Lo que hiciste, lo que decidiste y lo que sigue en pie.",
+    week: "Esta semana",
+    /** La métrica del plan del bot, dicha como frase. */
+    kept: (kept: number, said: number) =>
+      kept === said
+        ? `De lo que dijiste esta semana, las ${said} cosas siguen en algún lado.`
+        : `De lo que dijiste esta semana, ${kept} de ${said} siguen en algún lado.`,
+    habits: "Hábitos",
+    weekdays: ["L", "M", "M", "J", "V", "S", "D"],
+    weekdayNames: ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"],
+    marks: {
+      done: "hecho",
+      missed: "no se pudo",
+      skipped: "hoy no",
+      pending: "pendiente",
+      future: "por venir",
+      off: "sin registro",
+    },
+    decisions: "Lo que decidiste",
+    kinds: {
+      done: "Hecho",
+      rescheduled: "Reagendado",
+      deferred: "Recorrido",
+      killed: "Descartado",
+      moved: "Movido",
+      planned: "Agendado",
+    },
+    empty: "Todavía no has decidido nada esta semana. El día apenas empieza.",
   },
   brain: {
     label: "Mapa de ideas",

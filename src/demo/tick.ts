@@ -137,15 +137,22 @@ export function skipDays(s: DemoState, from: Minute, until: Minute, outcomes: Sk
     if (block.status === "planned" && block.end <= until) block.status = "done";
   }
 
+  // Lo hecho mientras tanto queda en el día en que pasó (el de su fecha, dentro del salto),
+  // no en el momento de llegar: así History no lo cuenta como hecho hoy.
+  const firstSkipped = dayOf(from) + 1;
+  const lastSkipped = Math.max(firstSkipped, dayOf(until) - 1);
   let doneCount = 0;
   for (const hint of outcomes.done) {
     const [item] = findByHint(s, hint).filter((i) => i.status === "active" || i.status === "inbox");
     if (!item) continue;
+    const day = Math.min(lastSkipped, Math.max(firstSkipped, item.dueDay ?? firstSkipped));
+    const doneAt = at(day, "19:00") + doneCount;
     item.status = "done";
-    item.doneAt = until;
-    logDecision(s, until, "done", item.title, item.id);
+    item.doneAt = doneAt;
+    logDecision(s, doneAt, "done", item.title, item.id);
     doneCount += 1;
   }
+  s.decisions.sort((a, b) => a.at - b.at);
   for (const o of outcomes.habits) {
     const hd = s.habitDays.find((h) => h.key === o.key && h.day === o.day);
     if (!hd) continue;

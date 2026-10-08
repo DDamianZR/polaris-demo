@@ -154,7 +154,7 @@ function Layout() {
       </div>
       <nav
         aria-label={UI.nav.label}
-        className="punteado-t grid shrink-0 grid-cols-3 pb-[env(safe-area-inset-bottom)]"
+        className="punteado-t grid shrink-0 grid-cols-4 pb-[env(safe-area-inset-bottom)]"
       >
         <TabButton active={mobileChat} label={UI.nav.chat} onClick={() => setMobileChat(true)}>
           <ChatCircle size={20} weight="light" aria-hidden="true" />

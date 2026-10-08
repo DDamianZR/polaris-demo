@@ -386,7 +386,7 @@ describe("check-in nocturno (F3)", () => {
     let s = run(fixtureState(), [night, tick]);
     const card = last(s);
     expect(card.text).toBe(
-      "1/4 · Reporte de la práctica de Redes (vencía ayer)\nYa se recorrió 3 veces. Fecha dura o se va.",
+      "1/4 · Reporte de la práctica de Redes (vencía ayer)\n<b>Ya se recorrió 3 veces.</b> Fecha dura o se va.",
     );
     expect(labels(card)).not.toContain("⏭ Recorrer");
 

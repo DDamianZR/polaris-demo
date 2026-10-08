@@ -70,7 +70,7 @@ export function ChatPanel({ className = "" }: { className?: string }) {
           const log = e.currentTarget;
           pinned.current = log.scrollHeight - log.scrollTop - log.clientHeight < 80;
         }}
-        className="min-h-0 flex-1 overflow-y-auto px-5 py-6"
+        className="relative min-h-0 flex-1 overflow-y-auto px-5 py-6"
       >
         <div ref={contentRef} className="flex min-h-full flex-col gap-6">
           {messages.length === 0 ? <EmptyChat firstAt={nextTime(session)} /> : null}

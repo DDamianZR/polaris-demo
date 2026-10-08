@@ -104,16 +104,20 @@ Aceptada el 2026-10-08 con el rediseño Sinapsis (`docs/diseno.md`): mapa de ide
 
 ### D3 Hábitos + check-in + History
 
-- [ ] **History** ("¿Qué ha ocurrido?"):
+- [x] **History** ("¿Qué ha ocurrido?"):
   - La métrica de la semana, dicha como frase: de lo que dijiste, cuánto sigue en algún lado.
   - Los hábitos de lunes a domingo, sin rachas ni culpa.
   - Lo que decidiste cada día: hecho, reagendado, recorrido, descartado, movido o agendado.
-- [ ] **Navegación:** History entra a las pestañas y a la barra del cel. Los capítulos de hábito, check-in y viernes abren History.
-- [ ] **Capítulos 4, 7 y 8 en la UI:**
+- [x] **Navegación:** History entra a las pestañas y a la barra del cel. Los capítulos de hábito, check-in y viernes abren History.
+- [x] **Capítulos 4, 7 y 8 en la UI:**
   - El lazo del desayuno al almuerzo.
   - El check-in de 4 pendientes a puro tap, donde la regla de 3 se ve.
   - El salto al viernes y la caída, con un solo catch-up.
-- [ ] **Pruebas** de los selectores de History.
+- [x] **Pruebas** de los selectores de History.
+
+**Notas de D3:**
+- El check-in de 4 pendientes se resuelve con 5 toques (reagendar pide la fecha). La regla de 3 se ve en la tarjeta, en negritas, y sin el botón Recorrer.
+- Lo hecho "mientras tanto" en el salto al viernes queda registrado en su día (miércoles y jueves), no en el momento del salto.
 
 ## Decisiones abiertas (con default)
 

@@ -1,5 +1,6 @@
 import { Plus } from "@phosphor-icons/react";
 import { UI } from "../copy/es";
+import { HistoryView } from "./HistoryView";
 import { InboxView } from "./InboxView";
 import { NAV, type View } from "./nav";
 import { TodayView } from "./TodayView";
@@ -63,12 +64,10 @@ export function PolarisPanel({
           </button>
         </header>
       ) : null}
-      <div className="min-h-0 flex-1 overflow-y-auto">
-        {view === "today" ? (
-          <TodayView revealKey={revealKey} />
-        ) : (
-          <InboxView focusKey={focusKey} revealKey={revealKey} />
-        )}
+      <div className="relative min-h-0 flex-1 overflow-y-auto">
+        {view === "today" ? <TodayView revealKey={revealKey} /> : null}
+        {view === "inbox" ? <InboxView focusKey={focusKey} revealKey={revealKey} /> : null}
+        {view === "history" ? <HistoryView /> : null}
       </div>
     </section>
   );

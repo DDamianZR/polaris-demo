@@ -2,7 +2,7 @@
 import { fixedOn, plannedOn } from "./slots";
 import { type DemoState, normalize } from "./state";
 import { DAY, dayOf, type Minute, minuteOfDay } from "./time";
-import type { HabitDay, Item } from "./types";
+import type { Decision, HabitDay, Item } from "./types";
 
 export type AgendaEntry = {
   id: string;
@@ -164,4 +164,30 @@ export function ideaNeurons(s: DemoState): {
     neurons,
     counts: { ideas: neurons.length, conectadas: neurons.length - sueltas, sueltas },
   };
+}
+
+/** `id`: posición en el registro, estable para usarla como key. */
+export type DecisionEntry = Decision & { id: number };
+export type DecisionDay = { day: number; entries: DecisionEntry[] };
+
+/** Lo que decidiste, por día: lo más reciente arriba, como un diario. */
+export function decisionsByDay(s: DemoState): DecisionDay[] {
+  const days = new Map<number, { entry: Decision; order: number }[]>();
+  s.decisions.forEach((entry, order) => {
+    const day = dayOf(entry.at);
+    days.set(day, [...(days.get(day) ?? []), { entry, order }]);
+  });
+  return [...days.entries()]
+    .sort(([a], [b]) => b - a)
+    .map(([day, list]) => ({
+      day,
+      entries: list
+        .sort((a, b) => b.entry.at - a.entry.at || b.order - a.order)
+        .map((x) => ({ ...x.entry, id: x.order })),
+    }));
+}
+
+/** Cada hábito con su semana de lunes a domingo. */
+export function habitRows(s: DemoState, now: Minute) {
+  return s.habits.map((h) => ({ key: h.key, name: h.name, marks: habitWeek(s, h.key, now) }));
 }
