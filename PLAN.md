@@ -1,6 +1,6 @@
 # Polaris · demo web — Plan
 
-**Estado:** D0 ✅ · D1 ✅ · D2 en curso (rediseño Sinapsis listo, falta la aceptación) · **Actualizado:** 2026-10-08 · **Aprobado:** 2026-10-07
+**Estado:** D0 ✅ · D1 ✅ · D2 ✅ · D3 en curso · **Actualizado:** 2026-10-08 · **Aprobado:** 2026-10-07
 
 ## Objetivo
 
@@ -60,8 +60,8 @@ Medidos con WCAG sobre Midnight `#070A14`:
 |---|---|---|---|
 | D0 Cimientos | Docs, scaffold, tokens, Inter, Phosphor, Biome, Vitest, isotipo SVG y loader | `npm run check` en verde. El SVG se aprueba lado a lado con el `.webp` | ✅ |
 | D1 Motor | fixture, engine, script y reloj, con pruebas por capítulo | `npm test` en verde, todavía sin UI | ✅ |
-| D2 Today + Inbox + chat | Estructura responsive y capítulos 1–3 | La captura aparece en Today y el texto libre cae al Inbox | ⏳ |
-| D3 Hábitos + check-in + History | Capítulos 4, 7 y 8 | Check-in de 4 pendientes a puro tap y la regla de 3 se ve | ⬜ |
+| D2 Today + Inbox + chat | Estructura responsive y capítulos 1–3 | La captura aparece en Today y el texto libre cae al Inbox | ✅ |
+| D3 Hábitos + check-in + History | Capítulos 4, 7 y 8 | Check-in de 4 pendientes a puro tap y la regla de 3 se ve | ⏳ |
 | D4 Orbit + Direction | Capítulos 5 y 6, Orbit con alternativa en lista y el árbol de Direction | La negociación se reproduce completa | ⬜ |
 | D5 Landing + pulido | Secciones de la landing, Ctrl+K, a11y, checklist de diseño y Lighthouse | Se ve bien a 375, 768 y 1280 px. Lighthouse ≥ 90 en a11y y rendimiento. Cero guiones largos visibles | ⬜ |
 
@@ -97,6 +97,23 @@ Todo en `src/demo/`, TS puro: `step(state, action, now)` nunca muta su entrada n
 **Lo que dejó D1 para D2:**
 - **Salto al viernes:** es un recurso de la demo (`skipDays`), no del bot. El chat lo avisa con un mensaje del sistema, para que no parezca que Polaris se quedó callado.
 - **Texto libre:** sin parser solo se lee lo que el código puede leer solo. Es el tiempo con número ("4 horas") y un "va" o un "no" en una negociación o un plan abierto. Todo lo demás cae al inbox, tal cual.
+
+### D2 Today + Inbox + chat
+
+Aceptada el 2026-10-08 con el rediseño Sinapsis (`docs/diseno.md`): mapa de ideas en forma de cerebro, columna del reloj, chat editorial, Today e Inbox en un solo flujo.
+
+### D3 Hábitos + check-in + History
+
+- [ ] **History** ("¿Qué ha ocurrido?"):
+  - La métrica de la semana, dicha como frase: de lo que dijiste, cuánto sigue en algún lado.
+  - Los hábitos de lunes a domingo, sin rachas ni culpa.
+  - Lo que decidiste cada día: hecho, reagendado, recorrido, descartado, movido o agendado.
+- [ ] **Navegación:** History entra a las pestañas y a la barra del cel. Los capítulos de hábito, check-in y viernes abren History.
+- [ ] **Capítulos 4, 7 y 8 en la UI:**
+  - El lazo del desayuno al almuerzo.
+  - El check-in de 4 pendientes a puro tap, donde la regla de 3 se ve.
+  - El salto al viernes y la caída, con un solo catch-up.
+- [ ] **Pruebas** de los selectores de History.
 
 ## Decisiones abiertas (con default)
 
