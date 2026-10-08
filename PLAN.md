@@ -73,8 +73,8 @@ Estados: ⬜ sin empezar · ⏳ en curso · ✅ hecha
 - [x] Scaffold con Vite + React 19 + TS, Tailwind v4, Biome, Vitest y script `check`. Las versiones van fijas y tienen al menos ~2 semanas de publicadas.
 - [x] Tokens de `docs/ux.md` en `@theme`, con los ajustes de contraste y una prueba que mide el contraste de cada par texto/fondo.
 - [x] Inter self-hosted y Phosphor.
-- [ ] Isotipo en SVG y loader (el anillo gira, la estrella queda fija; estático con reduced motion).
-- [ ] Página de revisión con el SVG junto al `.webp` y su aprobación.
+- [x] Isotipo en SVG y loader (el anillo gira, la estrella queda fija; estático con reduced motion). La geometría se midió del `.webp` y se ajustó con Béziers: el contorno queda a ≤ 1 px y la IoU es de 0.94 en la estrella y 0.91 en el anillo. El favicon sale de la misma geometría.
+- [ ] Página de revisión con el SVG junto al `.webp` (lista) y **la aprobación** (pendiente).
 
 ## Decisiones abiertas (con default)
 
