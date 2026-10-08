@@ -3,7 +3,7 @@ import { CHECKIN_EMPTY, DUMP_NONE, NEG_DECLINED, NEG_HOW_LONG, OTHER_SHORT } fro
 import { type Action, step } from "./engine";
 import { fixtureState } from "./fixture";
 import { PLAN_TEXT } from "./script";
-import { recentCaptures } from "./selectors";
+import { inboxStream, showsSource } from "./selectors";
 import type { DemoState } from "./state";
 import { at, JUE, MAR, MIE, type Minute, VIE } from "./time";
 import type { Message, Parsed, Press } from "./types";
@@ -41,8 +41,8 @@ describe("brief (F2)", () => {
     const s = run(fixtureState(), [at(MAR, "07:00"), tick]);
     const lines = last(s).text.split("\n");
     expect(lines[0]).toBe("Buenos días. Hoy es mar 13 oct.");
-    expect(lines[1]).toBe("Fijo: 08:00 ADS · 11:00 Sistemas Digitales · 20:00 Entrenamiento");
-    expect(lines).toContain("Para hoy:");
+    expect(lines[1]).toBe("<b>Fijo</b> 08:00 ADS · 11:00 Sistemas Digitales · 20:00 Entrenamiento");
+    expect(lines).toContain("<b>Para hoy</b>");
     expect(lines.at(-1)).toBe("Inbox: 3");
     expect(lines.length).toBeLessThanOrEqual(12);
   });
@@ -127,11 +127,32 @@ describe("captura (F1)", () => {
       [at(MAR, "07:21"), { type: "capture", text: "  cotizar audífonos  " }],
     );
     expect(s.messages).toHaveLength(before.messages.length);
-    const groups = recentCaptures(s);
-    expect(groups.map((g) => [g.source, g.items.map((i) => i.title)])).toEqual([
+    const stream = inboxStream(s);
+    const [raw, structured] = stream;
+    expect([raw, structured].map((e) => [e?.source, e?.items.map((i) => i.title)])).toEqual([
       ["cotizar audífonos", ["cotizar audífonos"]],
       [sentence, ["Entregar Sistemas", "Comprar cables para la práctica"]],
     ]);
+    // Se cita lo que escribiste solo si Polaris lo convirtió en otra cosa.
+    expect(raw && showsSource(raw)).toBe(false);
+    expect(structured && showsSource(structured)).toBe(true);
+    // Cada pendiente aparece una sola vez en el Inbox.
+    const ids = stream.flatMap((e) => e.items.map((i) => i.id));
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it("en el Inbox, lo capturado en el mismo minuto sale de lo más nuevo a lo más viejo", () => {
+    const t = at(MAR, "07:30");
+    const s = run(
+      fixtureState(),
+      [t, { type: "capture", text: "primero" }],
+      [t, { type: "capture", text: "segundo" }],
+    );
+    expect(
+      inboxStream(s)
+        .slice(0, 2)
+        .map((e) => e.source),
+    ).toEqual(["segundo", "primero"]);
   });
 
   it("consultas y cambios por pista", () => {
@@ -185,7 +206,7 @@ describe("volcado (F1)", () => {
     const users = s.messages.filter((m) => m.from === "user" && !m.text.startsWith("/"));
     expect(users.map((m) => m.reaction)).toEqual(["👍", "👍"]);
     expect(last(s).text).toBe(
-      "📥 Volcado: 2 cosas\nestudio\n1. Sacar copias · inbox\nsin área\n2. cotizar la moto · inbox\nCorrige respondiendo: «el 3 es para el viernes», «borra el 4».",
+      "📥 Volcado: 2 cosas\n<b>estudio</b>\n1. Sacar copias · inbox\n<b>sin área</b>\n2. cotizar la moto · inbox\nCorrige respondiendo: «el 3 es para el viernes», «borra el 4».",
     );
     expect(run(s, [at(MAR, "07:36"), send("/listo")]).messages.at(-1)?.text).toBe(DUMP_NONE);
   });

@@ -1,6 +1,6 @@
 /** Vistas derivadas del estado para la UI. Puras, con `now` inyectado. */
 import { fixedOn, plannedOn } from "./slots";
-import type { DemoState } from "./state";
+import { type DemoState, normalize } from "./state";
 import { DAY, dayOf, type Minute, minuteOfDay } from "./time";
 import type { HabitDay, Item } from "./types";
 
@@ -70,33 +70,42 @@ export function todayView(s: DemoState, now: Minute) {
   };
 }
 
-/** `raw`: sin parser, quedó tal cual en el inbox ("lo ordenamos después"). */
-export type CaptureGroup = { source: string; at: Minute; items: Item[]; raw: boolean };
+/** Una entrada del Inbox: lo que escribiste (si salió de un mensaje) y en qué se convirtió. */
+export type StreamEntry = { key: string; at: Minute; source: string | null; items: Item[] };
 
-/** Lo último que escribiste y en qué se convirtió, agrupado por mensaje. */
-export function recentCaptures(s: DemoState, limit = 4): CaptureGroup[] {
-  const groups = new Map<string, CaptureGroup>();
-  for (const item of s.items) {
-    if (!item.source) continue;
-    const key = `${item.createdAt}|${item.source}`;
-    const group = groups.get(key) ?? {
-      source: item.source,
+/**
+ * El Inbox como un solo flujo, lo más nuevo arriba: las capturas con lo que hizo Polaris, más
+ * lo que sigue sin fecha. Cada pendiente aparece una sola vez.
+ */
+export function inboxStream(s: DemoState): StreamEntry[] {
+  const entries = new Map<string, StreamEntry & { order: number }>();
+  s.items.forEach((item, order) => {
+    if (item.status === "killed") return;
+    if (!item.source && item.status !== "inbox") return;
+    const key = item.source ? `${item.createdAt}|${item.source}` : item.id;
+    const entry = entries.get(key) ?? {
+      key,
       at: item.createdAt,
+      source: item.source,
       items: [],
-      raw: false,
+      order,
     };
-    group.items.push(item);
-    groups.set(key, group);
-  }
-  for (const group of groups.values()) {
-    const [only] = group.items;
-    group.raw =
-      group.items.length === 1 &&
-      only?.status === "inbox" &&
-      only.kind === "task" &&
-      only.area === null;
-  }
-  return [...groups.values()].sort((a, b) => b.at - a.at).slice(0, limit);
+    entry.items.push(item);
+    entries.set(key, entry);
+  });
+  // En el mismo minuto (un volcado rápido), lo último que llegó va arriba.
+  return [...entries.values()]
+    .sort((a, b) => b.at - a.at || b.order - a.order)
+    .map(({ order: _, ...entry }) => entry);
+}
+
+const plain = (text: string) => normalize(text).replace(/\s+/g, " ");
+
+/** Citar lo que escribiste solo aporta si Polaris lo convirtió en algo distinto. */
+export function showsSource(entry: StreamEntry): boolean {
+  const [only] = entry.items;
+  if (entry.source === null) return false;
+  return !(entry.items.length === 1 && only && plain(only.title) === plain(entry.source));
 }
 
 export function inboxItems(s: DemoState): Item[] {

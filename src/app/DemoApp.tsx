@@ -29,6 +29,7 @@ function Layout() {
   const [mobileChat, setMobileChat] = useState(true);
   const [unseen, setUnseen] = useState(false);
   const [focusKey, setFocusKey] = useState(0);
+  const [revealKey, setRevealKey] = useState(0);
 
   const index = chapterIndex(session);
   useEffect(() => {
@@ -38,35 +39,36 @@ function Layout() {
   }, [index]);
 
   // En el cel, si algo cae en Polaris mientras ves el chat, la pestaña lo avisa con un punto.
-  const itemsVersion = session.demo.items.map((i) => `${i.id}:${i.status}:${i.dueDay}`).join();
+  // Solo cuando llega algo: cambiar de pestaña no cuenta como novedad.
+  const freshKey = session.fresh.join();
+  // biome-ignore lint/correctness/useExhaustiveDependencies: el aviso depende solo de lo que llegó.
   useEffect(() => {
-    if (itemsVersion && mobileChat) setUnseen(true);
-  }, [itemsVersion, mobileChat]);
+    if (freshKey && mobileChat) setUnseen(true);
+  }, [freshKey]);
   useEffect(() => {
     if (!mobileChat) setUnseen(false);
   }, [mobileChat]);
-  // biome-ignore lint/correctness/useExhaustiveDependencies: al saltar de capítulo no hay nada nuevo que avisar.
-  useEffect(() => setUnseen(false), [session.replayKey]);
 
   function openView(next: View) {
     setView(next);
     setMobileChat(false);
+    setRevealKey((k) => k + 1);
   }
 
   return (
-    <div className="min-h-dvh bg-midnight pb-20 md:pb-0">
+    <div className="flex h-dvh flex-col bg-midnight md:block md:h-auto md:min-h-dvh">
       <h1 className="sr-only">Un día con Polaris</h1>
-      <header className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-4 md:px-8">
+      <header className="mx-auto flex h-14 w-full max-w-[1400px] shrink-0 items-center justify-between gap-4 px-4 md:h-16 md:px-8">
         <div className="flex items-center gap-3">
           <Isotipo size={28} title="Polaris" />
           <Wordmark className="text-small text-fg" />
         </div>
-        <p className="text-caption text-fg-muted">{UI.demoLabel}</p>
+        <p className="text-right text-caption text-fg-muted">{UI.demoLabel}</p>
       </header>
 
-      <main className="mx-auto flex max-w-[1400px] flex-col gap-5 px-4 md:px-8 md:pb-8">
+      <main className="mx-auto flex min-h-0 w-full max-w-[1400px] flex-1 flex-col gap-4 px-4 pb-3 md:gap-6 md:px-8 md:pb-8">
         <Controls />
-        <div className="grid h-[72dvh] min-h-[480px] overflow-hidden rounded-xl border border-line bg-base md:h-[min(780px,calc(100dvh-240px))] md:min-h-[560px] md:grid-cols-[320px_1fr] lg:grid-cols-[380px_1fr]">
+        <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)] overflow-hidden rounded-xl border border-line bg-base md:h-[min(760px,calc(100dvh-300px))] md:min-h-[540px] md:flex-none md:grid-cols-[340px_minmax(0,1fr)] lg:grid-cols-[380px_minmax(0,1fr)]">
           <ChatPanel
             className={`border-line md:flex md:border-r ${mobileChat ? "flex" : "hidden"}`}
           />
@@ -75,6 +77,7 @@ function Layout() {
             view={view}
             onView={setView}
             focusKey={focusKey}
+            revealKey={revealKey}
             onQuickCapture={() => {
               setView("inbox");
               setFocusKey((k) => k + 1);
@@ -85,7 +88,7 @@ function Layout() {
 
       <nav
         aria-label={UI.nav.label}
-        className="fixed inset-x-0 bottom-0 z-10 grid grid-cols-3 border-t border-line bg-raised pb-[env(safe-area-inset-bottom)] md:hidden"
+        className="grid shrink-0 grid-cols-3 border-t border-line bg-raised pb-[env(safe-area-inset-bottom)] md:hidden"
       >
         <TabButton active={mobileChat} label={UI.nav.chat} onClick={() => setMobileChat(true)}>
           <ChatCircle size={22} aria-hidden="true" />

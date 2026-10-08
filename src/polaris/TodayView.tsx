@@ -6,7 +6,7 @@ import { duration, hhmm } from "../demo/time";
 import { ItemRow, SectionLabel } from "./ItemRow";
 
 /** Today: entender la situación en menos de 3 segundos. Sin información secundaria. */
-export function TodayView() {
+export function TodayView({ revealKey = 0 }: { revealKey?: number }) {
   const { session } = useDemo();
   const now = Math.floor(session.now);
   const view = todayView(session.demo, now);
@@ -90,6 +90,7 @@ export function TodayView() {
                 showDay={item.dueDay !== view.day}
                 isNew={isNewItem(session, item.id)}
                 reveal={session.fresh.includes(item.id)}
+                revealKey={revealKey}
               />
             ))}
           </ul>
@@ -107,6 +108,7 @@ export function TodayView() {
                 today={view.day}
                 isNew={isNewItem(session, item.id)}
                 reveal={session.fresh.includes(item.id)}
+                revealKey={revealKey}
               />
             ))}
           </ul>

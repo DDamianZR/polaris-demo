@@ -2,10 +2,10 @@ import { PaperPlaneRight } from "@phosphor-icons/react";
 import { motion, useReducedMotion } from "motion/react";
 import { type FormEvent, Fragment, type KeyboardEvent, useEffect, useRef, useState } from "react";
 import { useDemo } from "../app/DemoContext";
-import { visibleSuggestions } from "../app/session";
+import { nextTime, visibleSuggestions } from "../app/session";
 import { Isotipo } from "../brand/Isotipo";
 import { UI } from "../copy/es";
-import { dayOf, shortDate } from "../demo/time";
+import { dayOf, hhmm, shortDate } from "../demo/time";
 import { MessageBubble } from "./MessageBubble";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -17,19 +17,28 @@ export function ChatPanel({ className = "" }: { className?: string }) {
   const suggestions = visibleSuggestions(session);
   const [draft, setDraft] = useState("");
   const logRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  /** ¿Estás leyendo lo último? Entonces el chat te sigue cuando algo crece o llega. */
+  const pinned = useRef(true);
 
-  // Siempre al último mensaje, también cuando uno se edita en su lugar.
-  const lastText = messages.at(-1)?.text;
-  // biome-ignore lint/correctness/useExhaustiveDependencies: el scroll se dispara con cada mensaje nuevo o editado.
+  // Un mensaje nuevo siempre te trae al final.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: solo importa cuántos mensajes hay.
+  useEffect(() => {
+    pinned.current = true;
+  }, [messages.length]);
+
+  // El ack crece de ✓ al texto completo después de llegar: se sigue el tamaño, no el estado.
+  // Scroll instantáneo: uno suave dispara scrolls intermedios que lo despegarían del final.
   useEffect(() => {
     const log = logRef.current;
-    if (!log) return;
-    const id = window.setTimeout(
-      () => log.scrollTo({ top: log.scrollHeight, behavior: reduce ? "auto" : "smooth" }),
-      50,
-    );
-    return () => window.clearTimeout(id);
-  }, [messages.length, lastText, reduce]);
+    const content = contentRef.current;
+    if (!log || !content) return;
+    const observer = new ResizeObserver(() => {
+      if (pinned.current) log.scrollTo({ top: log.scrollHeight });
+    });
+    observer.observe(content);
+    return () => observer.disconnect();
+  }, []);
 
   function submit(event?: FormEvent) {
     event?.preventDefault();
@@ -44,7 +53,7 @@ export function ChatPanel({ className = "" }: { className?: string }) {
   }
 
   return (
-    <section aria-label={UI.chat.log} className={`flex min-h-0 flex-col bg-raised ${className}`}>
+    <section aria-label={UI.chat.log} className={`min-h-0 min-w-0 flex-col bg-raised ${className}`}>
       <header className="flex h-16 shrink-0 items-center gap-3 border-b border-line px-4">
         <Isotipo size={32} />
         <div className="leading-tight">
@@ -57,38 +66,45 @@ export function ChatPanel({ className = "" }: { className?: string }) {
         ref={logRef}
         role="log"
         aria-live="polite"
-        className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-3 py-4"
+        onScroll={(e) => {
+          const log = e.currentTarget;
+          pinned.current = log.scrollHeight - log.scrollTop - log.clientHeight < 80;
+        }}
+        className="min-h-0 flex-1 overflow-y-auto px-3 py-4"
       >
-        {messages.map((message, i) => {
-          const prev = messages[i - 1];
-          const newDay = !prev || dayOf(prev.at) !== dayOf(message.at);
-          // Lo que ya estaba al saltar de capítulo no se anima.
-          const isNew = i >= session.baseline;
-          return (
-            <Fragment key={message.id}>
-              {newDay ? (
-                <p className="my-1 self-center text-caption text-fg-muted">
-                  {shortDate(dayOf(message.at))}
-                </p>
-              ) : null}
-              <motion.div
-                className="flex flex-col"
-                initial={reduce || !isNew ? false : { opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.2, ease: EASE }}
-              >
-                <MessageBubble message={message} isNew={isNew} onPress={press} />
-              </motion.div>
-            </Fragment>
-          );
-        })}
+        <div ref={contentRef} className="flex min-h-full flex-col gap-3">
+          {messages.length === 0 ? <EmptyChat firstAt={nextTime(session)} /> : null}
+          {messages.map((message, i) => {
+            const prev = messages[i - 1];
+            const newDay = !prev || dayOf(prev.at) !== dayOf(message.at);
+            // Lo que ya estaba al saltar de capítulo no se anima.
+            const isNew = i >= session.baseline;
+            return (
+              <Fragment key={message.id}>
+                {newDay ? (
+                  <p className="my-1 self-center text-caption text-fg-muted">
+                    {shortDate(dayOf(message.at))}
+                  </p>
+                ) : null}
+                <motion.div
+                  className="flex flex-col"
+                  initial={reduce || !isNew ? false : { opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2, ease: EASE }}
+                >
+                  <MessageBubble message={message} isNew={isNew} onPress={press} />
+                </motion.div>
+              </Fragment>
+            );
+          })}
+        </div>
       </div>
 
       <div className="flex shrink-0 flex-col gap-2 border-t border-line p-3">
         {suggestions.length > 0 ? (
           <div className="flex flex-col gap-1.5">
             <p className="text-caption text-fg-muted">{UI.chat.suggestions}</p>
-            <div className="-mx-3 flex gap-1.5 overflow-x-auto px-3 [scrollbar-width:none]">
+            <div className="-mx-3 flex gap-1.5 overflow-x-auto px-3 [mask-image:linear-gradient(to_right,black_85%,transparent)] [scrollbar-width:none]">
               {suggestions.map((sg) => (
                 <button
                   key={sg.text}
@@ -126,5 +142,17 @@ export function ChatPanel({ className = "" }: { className?: string }) {
         </form>
       </div>
     </section>
+  );
+}
+
+/** Antes del primer mensaje: qué va a pasar y cuándo. */
+function EmptyChat({ firstAt }: { firstAt: number | null }) {
+  return (
+    <div className="m-auto flex max-w-[240px] flex-col gap-1 text-center">
+      <p className="text-fg-soft">{UI.chat.emptyTitle}</p>
+      {firstAt !== null ? (
+        <p className="text-small text-fg-muted">{UI.chat.emptyHint(hhmm(firstAt))}</p>
+      ) : null}
+    </div>
   );
 }

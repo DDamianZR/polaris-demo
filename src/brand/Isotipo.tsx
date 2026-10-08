@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { type CSSProperties, useId } from "react";
 import { GRADIENT, RING, RING_PATH, STAR_FILL, STAR_PATH, VIEWBOX } from "./geometry";
 
 type Props = {
@@ -8,9 +8,11 @@ type Props = {
   className?: string;
   /** Clase del grupo del anillo, p. ej. para girarlo en el loader. */
   ringClassName?: string;
+  /** Estilo del anillo, p. ej. un giro controlado por el reloj de la demo. */
+  ringStyle?: CSSProperties;
 };
 
-export function Isotipo({ size = 32, title, className, ringClassName }: Props) {
+export function Isotipo({ size = 32, title, className, ringClassName, ringStyle }: Props) {
   // useId trae caracteres que rompen url(#…); se dejan solo letras y números.
   const gradientId = `polaris-ring-${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
   const content = (
@@ -28,7 +30,7 @@ export function Isotipo({ size = 32, title, className, ringClassName }: Props) {
           <stop offset={1} stopColor={GRADIENT.to} />
         </linearGradient>
       </defs>
-      <g className={ringClassName}>
+      <g className={ringClassName} style={ringStyle}>
         <path fill={`url(#${gradientId})`} d={RING_PATH} />
       </g>
       <path fill={STAR_FILL} fillRule="evenodd" d={STAR_PATH} />

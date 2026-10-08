@@ -8,6 +8,26 @@ import type { Message, Press } from "../demo/types";
 const EDIT_DELAY_MS = 900;
 const EASE = [0.16, 1, 0.3, 1] as const;
 
+/** El bot escribe con parse_mode HTML y solo usa <b>. Se pinta como texto, nunca como HTML. */
+function Rich({ text }: { text: string }) {
+  const parts: React.ReactNode[] = [];
+  let offset = 0;
+  for (const chunk of text.split(/(<b>[^<]*<\/b>)/)) {
+    const bold = /^<b>([^<]*)<\/b>$/.exec(chunk);
+    parts.push(
+      bold ? (
+        <strong key={offset} className="font-semibold">
+          {bold[1]}
+        </strong>
+      ) : (
+        chunk
+      ),
+    );
+    offset += chunk.length;
+  }
+  return <>{parts}</>;
+}
+
 type Props = {
   message: Message;
   /** Llegó durante esta sesión (no venía de saltar de capítulo). */
@@ -50,7 +70,9 @@ export function MessageBubble({ message, isNew, onPress }: Props) {
             : "rounded-bl-xs bg-surface"
         }`}
       >
-        <p className="whitespace-pre-wrap break-words text-body">{text}</p>
+        <p className="whitespace-pre-wrap break-words text-body">
+          <Rich text={text} />
+        </p>
         <p className="mt-0.5 text-right text-caption font-normal text-fg-muted tabular-nums">
           {message.editedFrom && showFinal ? `${UI.chat.edited} · ` : ""}
           {hhmm(message.at)}

@@ -1,6 +1,4 @@
 import { Plus } from "@phosphor-icons/react";
-import { Isotipo } from "../brand/Isotipo";
-import { Wordmark } from "../brand/Wordmark";
 import { UI } from "../copy/es";
 import { InboxView } from "./InboxView";
 import { NAV, type View } from "./nav";
@@ -10,24 +8,28 @@ type Props = {
   view: View;
   onView: (view: View) => void;
   focusKey: number;
+  revealKey: number;
   onQuickCapture: () => void;
   className?: string;
 };
 
 /** Polaris UI: entender, revisar, reorganizar y decidir. Sidebar + contenido. */
-export function PolarisShell({ view, onView, focusKey, onQuickCapture, className = "" }: Props) {
+export function PolarisShell({
+  view,
+  onView,
+  focusKey,
+  revealKey,
+  onQuickCapture,
+  className = "",
+}: Props) {
   return (
     <div
-      className={`min-h-0 md:grid md:grid-cols-[72px_1fr] lg:grid-cols-[208px_1fr] ${className}`}
+      className={`min-h-0 min-w-0 md:grid md:grid-cols-[72px_minmax(0,1fr)] lg:grid-cols-[184px_minmax(0,1fr)] ${className}`}
     >
       <nav
         aria-label={UI.nav.label}
         className="hidden min-h-0 flex-col gap-1 border-r border-line bg-base p-3 md:flex"
       >
-        <div className="mb-3 flex h-10 items-center gap-2.5 px-2.5">
-          <Isotipo size={22} />
-          <Wordmark className="hidden text-caption text-fg lg:inline" />
-        </div>
         {NAV.map(({ key, label, icon: Icon }) => {
           const active = view === key;
           return (
@@ -68,7 +70,11 @@ export function PolarisShell({ view, onView, focusKey, onQuickCapture, className
       </nav>
 
       <div className="h-full min-h-0 overflow-y-auto bg-base">
-        {view === "today" ? <TodayView /> : <InboxView focusKey={focusKey} />}
+        {view === "today" ? (
+          <TodayView revealKey={revealKey} />
+        ) : (
+          <InboxView focusKey={focusKey} revealKey={revealKey} />
+        )}
       </div>
     </div>
   );

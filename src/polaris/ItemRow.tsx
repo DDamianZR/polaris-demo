@@ -1,7 +1,7 @@
 import { Bell, CheckCircle, Circle, Lightbulb } from "@phosphor-icons/react";
 import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef } from "react";
-import { relativeDay } from "../copy/es";
+import { relativeDay, UI } from "../copy/es";
 import { duration, hhmm } from "../demo/time";
 import type { Item } from "../demo/types";
 
@@ -15,6 +15,10 @@ type Props = {
   isNew?: boolean;
   /** Lo trajo la última acción: la vista se mueve hasta aquí. */
   reveal?: boolean;
+  /** En el Inbox, lo que no tiene fecha lo dice: es lo que queda por ordenar. */
+  showUndated?: boolean;
+  /** Cambia al abrir la vista (en el cel estaba escondida): vuelve a llevarla a lo nuevo. */
+  revealKey?: number;
 };
 
 function Icon({ item }: { item: Item }) {
@@ -26,19 +30,29 @@ function Icon({ item }: { item: Item }) {
 }
 
 /** Una tarea como la pide docs/ux.md: el título y solo la metadata que importa. */
-export function ItemRow({ item, today, showDay = true, isNew = false, reveal = false }: Props) {
+export function ItemRow({
+  item,
+  today,
+  showDay = true,
+  isNew = false,
+  reveal = false,
+  showUndated = false,
+  revealKey = 0,
+}: Props) {
   const reduce = useReducedMotion();
   const ref = useRef<HTMLLIElement>(null);
-  // Solo al aparecer: si cayó fuera de la vista, la vista va hacia él.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: es a propósito, solo al montar.
+  // Al aparecer (o al abrir su vista): si cayó fuera de la vista, la vista va hacia él.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: a propósito, solo al montar o al abrir la vista.
   useEffect(() => {
     if (reveal)
       ref.current?.scrollIntoView({ block: "nearest", behavior: reduce ? "auto" : "smooth" });
-  }, []);
+  }, [revealKey]);
   const when =
     showDay && item.dueDay !== null
       ? `${relativeDay(item.dueDay, today)}${item.dueAt !== null ? ` ${hhmm(item.dueAt)}` : ""}`
-      : null;
+      : showUndated && item.dueDay === null
+        ? UI.inbox.undated
+        : null;
   const meta = [
     when,
     item.context ?? item.area,
@@ -77,7 +91,7 @@ export function ItemRow({ item, today, showDay = true, isNew = false, reveal = f
 
 export function SectionLabel({ id, children }: { id: string; children: string }) {
   return (
-    <h3 id={id} className="text-caption uppercase tracking-[0.12em] text-fg-muted">
+    <h3 id={id} className="text-caption text-fg-muted">
       {children}
     </h3>
   );

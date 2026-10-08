@@ -52,7 +52,8 @@ export function dumpSummary(groups: [string | null, Item[]][]): string {
   const lines = [`📥 Volcado: ${total} cosa${total === 1 ? "" : "s"}`];
   let n = 0;
   for (const [area, group] of groups) {
-    lines.push(area ?? "sin área");
+    // Como el bot: el área va en negritas (<b>, el único formato que entiende el chat).
+    lines.push(`<b>${area ?? "sin área"}</b>`);
     for (const item of group) {
       n += 1;
       lines.push(`${n}. ${itemLine(item, false)}`);
@@ -89,13 +90,13 @@ export function brief(opts: {
   const lines: string[] = [];
   if (opts.greeting) lines.push(`Buenos días. Hoy es ${shortDate(opts.day)}.`);
   if (opts.fixed.length) {
-    lines.push(`Fijo: ${opts.fixed.map((f) => `${hhmm(f.start)} ${f.title}`).join(" · ")}`);
+    lines.push(`<b>Fijo</b> ${opts.fixed.map((f) => `${hhmm(f.start)} ${f.title}`).join(" · ")}`);
   }
   const body: string[] = [];
-  if (opts.today.length) body.push("Para hoy:", ...opts.today.map((i) => `• ${i.title}`));
+  if (opts.today.length) body.push("<b>Para hoy</b>", ...opts.today.map((i) => `• ${i.title}`));
   if (opts.upcoming.length) {
     body.push(
-      "Lo que viene:",
+      "<b>Lo que viene</b>",
       ...opts.upcoming.map((i) => `• ${i.title} · ${shortDate(i.dueDay ?? opts.day)}`),
     );
   }
@@ -267,8 +268,10 @@ export function relativeDay(day: number, today: number): string {
 export const clockLabel = (t: Minute) => `${shortDate(Math.floor(t / 1440))}, ${hhmm(t)}`;
 
 export const UI = {
-  demoLabel: "Demo interactiva con datos de ejemplo",
+  demoLabel: "Demo con datos de ejemplo",
   chat: {
+    emptyTitle: "Todavía no hay mensajes.",
+    emptyHint: (time: string) => `El primero llega a las ${time}, sin que lo pidas.`,
     title: "Polaris",
     caption: "Así se ve en tu Telegram",
     placeholder: "Escribe un mensaje",
@@ -278,7 +281,10 @@ export const UI = {
     suggestions: "Prueba con",
   },
   controls: {
-    next: "Siguiente momento",
+    goAt: (time: string) => `Ir a las ${time}`,
+    goAtDay: (day: string, time: string) => `Ir al ${day}, ${time}`,
+    clock: "Hora de la demo",
+    section: "Controles de la demo",
     play: "Reproducir el día",
     pause: "Pausar",
     chapters: "Capítulos",
@@ -318,38 +324,50 @@ export const UI = {
     concept: "Lo que ya no necesitas recordar.",
     placeholder: "Escribe lo que sea…",
     capture: "Capturar",
-    recent: "Recién capturado",
+    stream: "Lo que has capturado",
     undated: "Sin fecha",
     raw: "Lo tenemos. Lo ordenamos después.",
     empty: "Todo despejado.",
   },
+  /** `when` es la hora del día en que pasa: el itinerario de la demo. */
   chapters: {
-    brief: { title: "Lo que importa", lead: "A las 7 llega tu día en un vistazo. Sin abrir nada." },
+    brief: {
+      when: "07:00",
+      title: "Lo que importa",
+      lead: "A las 7 llega tu día en un vistazo. Sin abrir nada.",
+    },
     capture: {
+      when: "07:15",
       title: "Dilo como te salga",
       lead: "Escríbelo como se lo dirías a alguien. Polaris le pone fecha y lugar.",
     },
     dump: {
+      when: "07:30",
       title: "Vacía la cabeza",
       lead: "Suelta todo de jalón. Al final te lo regresa en orden.",
     },
     habit: {
+      when: "08:00",
       title: "Lo básico, sin culpa",
       lead: "Te recuerda, te pregunta y, si no se pudo, lo pasa a la siguiente ventana.",
     },
     negotiation: {
+      when: "13:00",
       title: "Pídele espacio",
       lead: "Te propone con números, te avisa una vez si te cargas de más y tú decides.",
     },
     plan: {
+      when: "17:00",
       title: "Aterriza tus planes",
       lead: "Pega un plan por pasos y te dice si cabe en tus semanas.",
     },
     checkin: {
+      when: "21:30",
       title: "Una decisión, no culpa",
       lead: "Cada noche, lo que no se hizo recibe una decisión en un tap.",
     },
     friday: {
+      when: "Viernes",
       title: "Nada se pierde",
       lead: "Aunque Polaris se apague, al volver te dice qué se pasó.",
     },

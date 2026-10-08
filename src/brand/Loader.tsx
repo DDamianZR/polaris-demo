@@ -15,7 +15,7 @@ export function Loader({ size = 32, label = "Cargando" }: Props) {
     <span role="status" className="inline-flex">
       <Isotipo
         size={size}
-        ringClassName="origin-center animate-[spin_2.4s_linear_infinite] motion-reduce:animate-none"
+        ringClassName="origin-center [transform-box:fill-box] animate-[spin_2.4s_linear_infinite] motion-reduce:animate-none"
       />
       <span className="sr-only">{label}</span>
     </span>

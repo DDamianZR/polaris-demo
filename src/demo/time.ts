@@ -115,3 +115,24 @@ export function duration(minutes: number): string {
   if (h === 0) return `${m} min`;
   return m === 0 ? `${h} h` : `${h} h ${m}`;
 }
+
+const MONTH_LONG = [
+  "enero",
+  "febrero",
+  "marzo",
+  "abril",
+  "mayo",
+  "junio",
+  "julio",
+  "agosto",
+  "septiembre",
+  "octubre",
+  "noviembre",
+  "diciembre",
+];
+
+/** `martes 13 de octubre`. */
+export function longDate(day: number): string {
+  const { m, d } = dateParts(day);
+  return `${DAY_LONG[weekday(day)]} ${d} de ${MONTH_LONG[m]}`;
+}

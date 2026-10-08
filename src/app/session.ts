@@ -158,3 +158,8 @@ export function reduceSession(s: Session, a: SessionAction): Session {
 export function isNewItem(s: Session, id: string): boolean {
   return s.demo.items.findIndex((i) => i.id === id) >= s.itemBaseline;
 }
+
+/** A qué hora lleva "Ir a…": lo próximo que pasa o el inicio del siguiente capítulo. */
+export function nextTime(s: Session): number | null {
+  return nextMoment(s.demo, Math.floor(s.now), CHAPTERS);
+}
