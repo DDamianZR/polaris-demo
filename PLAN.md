@@ -1,6 +1,6 @@
 # Polaris · demo web — Plan
 
-**Estado:** D0 en curso · **Actualizado:** 2026-10-07 · **Aprobado:** 2026-10-07
+**Estado:** D0 ✅ · D1 en curso · **Actualizado:** 2026-10-07 · **Aprobado:** 2026-10-07
 
 ## Objetivo
 
@@ -58,8 +58,8 @@ Medidos con WCAG sobre Midnight `#070A14`:
 
 | Fase | Qué queda | Aceptación | Estado |
 |---|---|---|---|
-| D0 Cimientos | Docs, scaffold, tokens, Inter, Phosphor, Biome, Vitest, isotipo SVG y loader | `npm run check` en verde. El SVG se aprueba lado a lado con el `.webp` | ⏳ |
-| D1 Motor | fixture, engine, script y reloj, con pruebas por capítulo | `npm test` en verde, todavía sin UI | ⬜ |
+| D0 Cimientos | Docs, scaffold, tokens, Inter, Phosphor, Biome, Vitest, isotipo SVG y loader | `npm run check` en verde. El SVG se aprueba lado a lado con el `.webp` | ✅ |
+| D1 Motor | fixture, engine, script y reloj, con pruebas por capítulo | `npm test` en verde, todavía sin UI | ⏳ |
 | D2 Today + Inbox + chat | Estructura responsive y capítulos 1–3 | La captura aparece en Today y el texto libre cae al Inbox | ⬜ |
 | D3 Hábitos + check-in + History | Capítulos 4, 7 y 8 | Check-in de 4 pendientes a puro tap y la regla de 3 se ve | ⬜ |
 | D4 Orbit + Direction | Capítulos 5 y 6, Orbit con alternativa en lista y el árbol de Direction | La negociación se reproduce completa | ⬜ |
@@ -74,7 +74,25 @@ Estados: ⬜ sin empezar · ⏳ en curso · ✅ hecha
 - [x] Tokens de `docs/ux.md` en `@theme`, con los ajustes de contraste y una prueba que mide el contraste de cada par texto/fondo.
 - [x] Inter self-hosted y Phosphor.
 - [x] Isotipo en SVG y loader (el anillo gira, la estrella queda fija; estático con reduced motion). La geometría se midió del `.webp` y se ajustó con Béziers: el contorno queda a ≤ 1 px y la IoU es de 0.94 en la estrella y 0.91 en el anillo. El favicon sale de la misma geometría.
-- [ ] Página de revisión con el SVG junto al `.webp` (lista) y **la aprobación** (pendiente).
+- [x] Página de revisión con el SVG junto al `.webp`. **SVG aprobado el 2026-10-07.**
+
+### D1 Motor
+
+Todo en `src/demo/`, TS puro: `step(state, action, now)` nunca muta su entrada ni lee el reloj. Antes de aplicar cualquier acción, procesa los eventos que ya vencieron, igual que el tick del bot. Los textos viven en `src/copy/es.ts`, copiados de `render/es.py` y de las specs F2–F7 del bot.
+
+- [ ] **Tiempo** (`time.ts`): minutos desde el lun 12 oct 2026 00:00, hora local. Fechas cortas ("jue 15 oct"), horas y duraciones.
+- [ ] **Fixture** (`fixture.ts`): la semana de un estudiante de ingeniería. Lleva clases recurrentes, bloques planeados, pendientes (uno ya recorrido 3 veces), 2 hábitos con ventanas, objetivos y proyectos, y un recordatorio el viernes.
+- [ ] **Huecos y carga** (`slots.ts`, versión simple de F5): huecos libres, carga por día, colocación en chunks, candidatos con movimientos y advertencia de sobrecarga.
+- [ ] **Planes** (`plan.ts`, F7): el formato Polaris se parsea con regex, sin LLM, y se reparte con tope por día y fecha límite.
+- [ ] **Motor** (`engine.ts` y sus flows):
+  - Captura con ack que se edita en su lugar; el texto libre va al inbox.
+  - Consultas y `/hoy`, `/inbox`, `/volcado`, `/listo`.
+  - Brief, hábitos de lazo cerrado y recordatorios.
+  - Check-in con regla de 3, negociación y plan.
+  - Caída con un solo catch-up, y salto de días.
+- [ ] **Guion** (`script.ts`): los 8 capítulos con sus sugerencias (chips con su JSON) y los pasos canónicos. `replayTo(n)` reconstruye el estado de cualquier capítulo.
+- [ ] **Reloj** (`clock.ts`): siguiente momento, capítulo actual y avance simulado.
+- [ ] **Pruebas:** una por capítulo y la conversación dorada de la negociación. Además, el día completo de punta a punta sin guiones largos en el chat.
 
 ## Decisiones abiertas (con default)
 
