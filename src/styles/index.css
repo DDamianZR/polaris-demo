@@ -1,108 +1,136 @@
 @import "tailwindcss";
 @import "@fontsource-variable/inter/wght.css";
 
-/* Tokens de docs/ux.md. Solo existen estos: la paleta, la escala y los radios por defecto
-   de Tailwind se borran para que nadie se salga del sistema. */
+/* Tokens de docs/diseno.md (Sinapsis). Solo existen estos: la paleta, la escala y los radios por
+   defecto de Tailwind se borran para que nadie se salga del sistema. */
 @theme {
   --color-*: initial;
 
-  /* Fondos */
-  --color-midnight: #070a14;
-  --color-base: #0b1020;
-  --color-raised: #0f1525;
-  --color-surface: #131a2a;
-  --color-elevated: #182033;
-  --color-line: #222b40;
+  /* Fondo: vacío. Sin superficies elevadas; tinta solo para tu globo en el chat. */
+  --color-vacio: #050407;
+  --color-tinta: #100d14;
 
-  /* Texto. fg-muted es el ajuste aprobado: el Muted original (#697386) no llega a AA. */
-  --color-fg: #f5f7fa;
-  --color-fg-soft: #a7b0c0;
-  --color-fg-muted: #808a9e;
-  /* Muted original: solo bordes, deshabilitados y elementos no textuales. */
-  --color-faint: #697386;
+  /* Texto en crema cálida, nunca blanco puro. */
+  --color-crema: #f2ebdf;
+  --color-ceniza: #a9a196;
+  --color-niebla: #8a8378;
 
-  /* Marca. Violet nunca en texto chico (3.5:1). Sobre blue, el texto va en midnight. */
-  --color-blue: #3b82f6;
-  --color-violet: #7c3aed;
-  --color-sky: #22a8f0;
+  /* Estructura: punteados finos y bordes de control. */
+  --color-linea: #2e2a24;
+  --color-trazo: #6b6358;
+
+  /* Acción, chispa y sinapsis. */
+  --color-iris: #8052ff;
+  --color-sobre-iris: #ffffff;
+  --color-chispa: #ffb829;
+  --color-sinapsis: #15846e;
+  --color-sinapsis-texto: #3fbf9f;
+
+  /* Solo para el isotipo y las partículas del cerebro. */
+  --color-cielo: #4c8dff;
+  --color-magenta: #e04fd3;
 
   --font-*: initial;
   --font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
 
   --text-*: initial;
-  --text-display: 48px;
-  --text-display--line-height: 56px;
-  --text-display--font-weight: 600;
-  --text-h1: 32px;
-  --text-h1--line-height: 40px;
-  --text-h1--font-weight: 600;
-  --text-h2: 24px;
-  --text-h2--line-height: 32px;
-  --text-h2--font-weight: 600;
-  --text-h3: 18px;
-  --text-h3--line-height: 26px;
-  --text-h3--font-weight: 600;
-  --text-body: 15px;
-  --text-body--line-height: 24px;
-  --text-small: 13px;
-  --text-small--line-height: 20px;
-  --text-caption: 12px;
-  --text-caption--line-height: 18px;
-  --text-caption--font-weight: 500;
+  --text-display: 104px;
+  --text-display--line-height: 0.9;
+  --text-display--letter-spacing: -0.04em;
+  --text-display--font-weight: 400;
+  --text-reloj-sm: 64px;
+  --text-reloj-sm--line-height: 0.9;
+  --text-reloj-sm--letter-spacing: -0.04em;
+  --text-reloj-xs: 48px;
+  --text-reloj-xs--line-height: 0.9;
+  --text-reloj-xs--letter-spacing: -0.04em;
+  --text-titular: 44px;
+  --text-titular--line-height: 0.95;
+  --text-titular--letter-spacing: -0.03em;
+  --text-titulo: 28px;
+  --text-titulo--line-height: 1.05;
+  --text-titulo--letter-spacing: -0.02em;
+  --text-entrada: 18px;
+  --text-entrada--line-height: 1.5;
+  --text-cuerpo: 15px;
+  --text-cuerpo--line-height: 1.55;
+  --text-chico: 13px;
+  --text-chico--line-height: 1.45;
+  --text-etiqueta: 12px;
+  --text-etiqueta--line-height: 1.2;
+  --text-etiqueta--letter-spacing: 0.08em;
+  --text-etiqueta--font-weight: 500;
 
-  /* Espaciado: base 4 px. p-1 = 4, p-4 = 16, p-24 = 96. */
   --spacing: 4px;
 
   --radius-*: initial;
-  --radius-xs: 4px; /* elementos pequeños */
-  --radius-sm: 8px; /* inputs y controles */
-  --radius-md: 12px; /* cards */
-  --radius-lg: 16px; /* superficies */
-  --radius-xl: 20px; /* contenedores principales */
-  --radius-full: 9999px; /* solo puntos e indicadores */
+  --radius-globo: 18px;
+  --radius-full: 9999px;
 
-  /* Motion: sin rebotes. */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 :root {
   color-scheme: dark;
-  --duration-micro: 140ms;
-  --duration-component: 200ms;
-  --duration-panel: 280ms;
-  --duration-page: 350ms;
-  --gradient-brand: linear-gradient(90deg, var(--color-sky), var(--color-violet));
+}
+
+/* Etiqueta editorial: mayúsculas, peso 500, tracking abierto. */
+@utility etiqueta {
+  font-size: var(--text-etiqueta);
+  line-height: var(--text-etiqueta--line-height);
+  letter-spacing: var(--text-etiqueta--letter-spacing);
+  font-weight: var(--text-etiqueta--font-weight);
+  text-transform: uppercase;
+}
+
+/* Divisor punteado fino: separa estructura, nunca decora. */
+@utility punteado-b {
+  border-bottom: 1px dashed var(--color-linea);
+}
+@utility punteado-t {
+  border-top: 1px dashed var(--color-linea);
+}
+@utility punteado-r {
+  border-right: 1px dashed var(--color-linea);
+}
+
+/* Números del reloj: tabulares y con los dígitos abiertos de Inter. */
+@utility cifras {
+  font-feature-settings: "tnum", "ss01";
 }
 
 @layer base {
   html {
-    background-color: var(--color-midnight);
+    background-color: var(--color-vacio);
   }
 
   body {
     min-height: 100dvh;
-    background-color: var(--color-midnight);
-    color: var(--color-fg);
+    background-color: var(--color-vacio);
+    color: var(--color-crema);
     font-family: var(--font-sans);
-    font-size: var(--text-body);
-    line-height: var(--text-body--line-height);
+    font-size: var(--text-cuerpo);
+    line-height: var(--text-cuerpo--line-height);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: var(--color-line) transparent;
+    scrollbar-color: var(--color-linea) transparent;
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-blue);
-    outline-offset: 2px;
+    outline: 2px solid var(--color-chispa);
+    outline-offset: 3px;
   }
 
   ::selection {
-    background-color: color-mix(in srgb, var(--color-blue) 40%, transparent);
+    background-color: color-mix(in srgb, var(--color-iris) 45%, transparent);
+  }
+
+  button {
+    cursor: pointer;
   }
 }
 

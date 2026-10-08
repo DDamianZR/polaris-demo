@@ -135,3 +135,33 @@ export function habitWeek(s: DemoState, key: string, now: Minute, weekStartDay =
     return hd?.status ?? "off";
   });
 }
+
+export type Neuron = {
+  id: string;
+  title: string;
+  area: Item["area"];
+  /** Suelta: sin fecha, en el inbox. Conectada: ya tiene lugar. Hecha: ya quedó. */
+  state: "suelta" | "conectada" | "hecha";
+};
+
+/** Cada pendiente vivo es una neurona del mapa de ideas. Matar algo lo saca del mapa. */
+export function ideaNeurons(s: DemoState): {
+  neurons: Neuron[];
+  counts: { ideas: number; conectadas: number; sueltas: number };
+} {
+  const neurons = s.items
+    .filter((i) => i.status !== "killed")
+    .map(
+      (i): Neuron => ({
+        id: i.id,
+        title: i.title,
+        area: i.area,
+        state: i.status === "inbox" ? "suelta" : i.status === "done" ? "hecha" : "conectada",
+      }),
+    );
+  const sueltas = neurons.filter((n) => n.state === "suelta").length;
+  return {
+    neurons,
+    counts: { ideas: neurons.length, conectadas: neurons.length - sueltas, sueltas },
+  };
+}

@@ -10,40 +10,36 @@ function color(name: string): string {
   return value;
 }
 
-const BACKGROUNDS = ["midnight", "base", "raised", "surface", "elevated"];
-const AA_TEXT = 4.5;
-const AA_LARGE_OR_UI = 3;
+const FONDOS = ["vacio", "tinta"];
+const AA_TEXTO = 4.5;
+const AA_GRANDE_O_CONTROL = 3;
 
-describe("contraste de los tokens", () => {
+describe("contraste de los tokens (Sinapsis)", () => {
   it("compara contra un valor conocido", () => {
     expect(contrast("#ffffff", "#000000")).toBeCloseTo(21, 5);
   });
 
-  for (const text of ["fg", "fg-soft", "fg-muted"]) {
-    for (const bg of BACKGROUNDS) {
-      it(`${text} sobre ${bg} llega a AA para texto`, () => {
-        expect(contrast(color(text), color(bg))).toBeGreaterThanOrEqual(AA_TEXT);
+  for (const texto of ["crema", "ceniza", "niebla", "chispa", "sinapsis-texto"]) {
+    for (const fondo of FONDOS) {
+      it(`${texto} sobre ${fondo} llega a AA para texto`, () => {
+        expect(contrast(color(texto), color(fondo))).toBeGreaterThanOrEqual(AA_TEXTO);
       });
     }
   }
 
-  it("blue como texto o enlace sobre midnight llega a AA", () => {
-    expect(contrast(color("blue"), color("midnight"))).toBeGreaterThanOrEqual(AA_TEXT);
+  it("el texto de la píldora principal (sobre-iris en iris) llega a AA", () => {
+    expect(contrast(color("sobre-iris"), color("iris"))).toBeGreaterThanOrEqual(AA_TEXTO);
   });
 
-  it("el texto de un botón azul (midnight sobre blue) llega a AA", () => {
-    expect(contrast(color("midnight"), color("blue"))).toBeGreaterThanOrEqual(AA_TEXT);
+  it("el borde de los controles fantasma (trazo) llega a 3:1", () => {
+    expect(contrast(color("trazo"), color("vacio"))).toBeGreaterThanOrEqual(AA_GRANDE_O_CONTROL);
   });
 
-  it("violet sobre midnight solo alcanza para texto grande y gráficos", () => {
-    const ratio = contrast(color("violet"), color("midnight"));
-    expect(ratio).toBeGreaterThanOrEqual(AA_LARGE_OR_UI);
-    expect(ratio).toBeLessThan(AA_TEXT);
+  it("la píldora iris se distingue del vacío (3:1)", () => {
+    expect(contrast(color("iris"), color("vacio"))).toBeGreaterThanOrEqual(AA_GRANDE_O_CONTROL);
   });
 
-  it("faint sirve como borde de control (3:1) pero no como texto", () => {
-    const ratio = contrast(color("faint"), color("midnight"));
-    expect(ratio).toBeGreaterThanOrEqual(AA_LARGE_OR_UI);
-    expect(ratio).toBeLessThan(AA_TEXT);
+  it("linea es estructura, no texto: queda por debajo de 3:1 a propósito", () => {
+    expect(contrast(color("linea"), color("vacio"))).toBeLessThan(AA_GRANDE_O_CONTROL);
   });
 });

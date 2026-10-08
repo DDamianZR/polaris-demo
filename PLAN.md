@@ -1,6 +1,6 @@
 # Polaris · demo web — Plan
 
-**Estado:** D0 ✅ · D1 ✅ · D2 en curso (estructura, chat, Today e Inbox listos; falta revisar el Inbox en el navegador, el cel y la aprobación) · **Actualizado:** 2026-10-07 · **Aprobado:** 2026-10-07
+**Estado:** D0 ✅ · D1 ✅ · D2 en curso (rediseño Sinapsis listo, falta la aceptación) · **Actualizado:** 2026-10-08 · **Aprobado:** 2026-10-07
 
 ## Objetivo
 
@@ -9,7 +9,7 @@ Que un **usuario potencial** entre, juegue un día con Polaris y salga pensando:
 ## Principios
 
 1. **Simulada y honesta.** 100 % estática: sin backend ni LLM. La salida del parser va escrita en el guion, y el texto libre cae al Inbox tal cual. Una etiqueta discreta dice "Demo interactiva con datos de ejemplo".
-2. **El sistema de diseño manda.** `docs/ux.md` es la fuente de verdad del diseño.
+2. **El sistema de diseño manda.** `docs/diseno.md` (Sinapsis) fija la paleta, la tipografía y la composición; `docs/ux.md`, el concepto, el tono y la accesibilidad.
 3. **El motor es puro.** `src/demo/` es TS sin React, con `now` inyectado y pruebas, igual que el dominio del bot.
 4. **Aislada del bot.** Rama huérfana; lo que haga falta del bot se copia, no se importa.
 

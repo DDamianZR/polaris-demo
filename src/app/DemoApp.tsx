@@ -7,10 +7,14 @@ import { ChatPanel } from "../chat/ChatPanel";
 import { UI } from "../copy/es";
 import { CHAPTERS } from "../demo/script";
 import { CHAPTER_VIEW, NAV, type View } from "../polaris/nav";
-import { PolarisShell } from "../polaris/PolarisShell";
-import { Controls } from "./Controls";
+import { PolarisPanel } from "../polaris/PolarisPanel";
+import { ChapterBar } from "./ChapterBar";
+import { DayClock } from "./DayClock";
 import { DemoProvider, useDemo } from "./DemoContext";
+import { IdeaMap } from "./IdeaMap";
+import { Itinerary } from "./Itinerary";
 import { chapterIndex } from "./session";
+import { DESKTOP, TABLET, useMediaQuery } from "./useMediaQuery";
 
 export function DemoApp() {
   return (
@@ -22,8 +26,19 @@ export function DemoApp() {
   );
 }
 
+function Brand() {
+  return (
+    <div className="flex items-center gap-3">
+      <Isotipo size={22} title="Polaris" />
+      <Wordmark className="text-[13px] font-medium text-crema" />
+    </div>
+  );
+}
+
 function Layout() {
   const { session } = useDemo();
+  const desktop = useMediaQuery(DESKTOP);
+  const tablet = useMediaQuery(TABLET);
   const [view, setView] = useState<View>("today");
   /** En el cel se ve una cosa a la vez: el chat o Polaris. */
   const [mobileChat, setMobileChat] = useState(true);
@@ -55,43 +70,94 @@ function Layout() {
     setRevealKey((k) => k + 1);
   }
 
+  const panel = (showTabs: boolean, className = "") => (
+    <PolarisPanel
+      className={className}
+      showTabs={showTabs}
+      view={view}
+      onView={setView}
+      focusKey={focusKey}
+      revealKey={revealKey}
+      onQuickCapture={() => {
+        setView("inbox");
+        setFocusKey((k) => k + 1);
+      }}
+    />
+  );
+
+  if (desktop) {
+    return (
+      <div className="grid h-dvh grid-cols-[minmax(360px,30vw)_minmax(0,1fr)] overflow-hidden">
+        <h1 className="sr-only">Un día con Polaris</h1>
+        <aside className="punteado-r flex min-h-0 flex-col px-8 pt-6 pb-6">
+          <Brand />
+          <div className="mt-10">
+            <DayClock now={session.now} size="display" />
+          </div>
+          <IdeaMap variant="full" withStats className="mt-2 min-h-[180px] flex-1" />
+          <Itinerary orientation="vertical" className="punteado-t mt-5 pt-3" />
+          <p className="etiqueta mt-4 text-niebla">{UI.demoLabel}</p>
+        </aside>
+        <main className="flex min-h-0 min-w-0 flex-col">
+          <ChapterBar size="large" className="punteado-b px-10 pt-7 pb-6" />
+          <div className="grid min-h-0 flex-1 grid-cols-[minmax(340px,420px)_minmax(0,1fr)]">
+            <ChatPanel className="punteado-r flex" />
+            {panel(true)}
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (tablet) {
+    return (
+      <div className="flex h-dvh flex-col overflow-hidden">
+        <h1 className="sr-only">Un día con Polaris</h1>
+        <header className="punteado-b flex h-14 shrink-0 items-center justify-between px-6">
+          <Brand />
+          <p className="etiqueta text-niebla">{UI.demoLabel}</p>
+        </header>
+        <section className="punteado-b grid shrink-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-8 px-6 py-4">
+          <DayClock now={session.now} size="sm" />
+          <IdeaMap variant="full" withStats className="h-[170px]" />
+        </section>
+        <ChapterBar size="compact" className="punteado-b px-6 py-4" />
+        <Itinerary orientation="horizontal" className="punteado-b px-6" />
+        <div className="grid min-h-0 flex-1 grid-cols-[minmax(300px,360px)_minmax(0,1fr)]">
+          <ChatPanel className="punteado-r flex" />
+          {panel(true)}
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex h-dvh flex-col bg-midnight md:block md:h-auto md:min-h-dvh">
+    <div className="flex h-dvh flex-col overflow-hidden">
       <h1 className="sr-only">Un día con Polaris</h1>
-      <header className="mx-auto flex h-14 w-full max-w-[1400px] shrink-0 items-center justify-between gap-4 px-4 md:h-16 md:px-8">
-        <div className="flex items-center gap-3">
-          <Isotipo size={28} title="Polaris" />
-          <Wordmark className="text-small text-fg" />
-        </div>
-        <p className="text-right text-caption text-fg-muted">{UI.demoLabel}</p>
+      <header className="flex h-12 shrink-0 items-center justify-between px-4">
+        <Brand />
+        <p className="etiqueta text-niebla">{UI.demoLabel}</p>
       </header>
-
-      <main className="mx-auto flex min-h-0 w-full max-w-[1400px] flex-1 flex-col gap-4 px-4 pb-3 md:gap-6 md:px-8 md:pb-8">
-        <Controls />
-        <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)] overflow-hidden rounded-xl border border-line bg-base md:h-[min(760px,calc(100dvh-300px))] md:min-h-[540px] md:flex-none md:grid-cols-[340px_minmax(0,1fr)] lg:grid-cols-[380px_minmax(0,1fr)]">
-          <ChatPanel
-            className={`border-line md:flex md:border-r ${mobileChat ? "flex" : "hidden"}`}
-          />
-          <PolarisShell
-            className={mobileChat ? "hidden md:grid" : "grid"}
-            view={view}
-            onView={setView}
-            focusKey={focusKey}
-            revealKey={revealKey}
-            onQuickCapture={() => {
-              setView("inbox");
-              setFocusKey((k) => k + 1);
-            }}
-          />
+      <section className="relative flex h-[118px] shrink-0 items-center px-4">
+        <IdeaMap
+          variant="compact"
+          className="pointer-events-none absolute inset-y-0 right-0 w-[56%]"
+        />
+        <div className="relative">
+          <DayClock now={session.now} size="xs" />
         </div>
-      </main>
-
+      </section>
+      <ChapterBar size="compact" className="punteado-t px-4 py-3" />
+      <Itinerary orientation="horizontal" className="punteado-t punteado-b px-4" />
+      <div className="flex min-h-0 flex-1">
+        {mobileChat ? <ChatPanel className="flex flex-1" /> : panel(false, "flex-1")}
+      </div>
       <nav
         aria-label={UI.nav.label}
-        className="grid shrink-0 grid-cols-3 border-t border-line bg-raised pb-[env(safe-area-inset-bottom)] md:hidden"
+        className="punteado-t grid shrink-0 grid-cols-3 pb-[env(safe-area-inset-bottom)]"
       >
         <TabButton active={mobileChat} label={UI.nav.chat} onClick={() => setMobileChat(true)}>
-          <ChatCircle size={22} aria-hidden="true" />
+          <ChatCircle size={20} weight="light" aria-hidden="true" />
         </TabButton>
         {NAV.map(({ key, label, icon: Icon }) => (
           <TabButton
@@ -101,7 +167,7 @@ function Layout() {
             dot={unseen && key === view}
             onClick={() => openView(key)}
           >
-            <Icon size={22} aria-hidden="true" />
+            <Icon size={20} weight="light" aria-hidden="true" />
           </TabButton>
         ))}
       </nav>
@@ -121,14 +187,14 @@ function TabButton(props: {
       type="button"
       onClick={props.onClick}
       aria-current={props.active ? "page" : undefined}
-      className={`relative flex h-16 flex-col items-center justify-center gap-1 text-caption ${
-        props.active ? "text-fg" : "text-fg-muted"
+      className={`etiqueta relative flex h-16 flex-col items-center justify-center gap-1.5 ${
+        props.active ? "text-crema" : "text-niebla"
       }`}
     >
       {props.children}
       {props.label}
       {props.dot ? (
-        <span className="absolute top-3 left-[calc(50%+8px)] size-2 rounded-full bg-blue" />
+        <span className="absolute top-3 left-[calc(50%+9px)] size-2 rounded-full bg-chispa" />
       ) : null}
     </button>
   );

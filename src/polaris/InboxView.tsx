@@ -47,16 +47,16 @@ export function InboxView({ focusKey, revealKey = 0 }: { focusKey: number; revea
   }
 
   return (
-    <div className="mx-auto flex max-w-[640px] flex-col gap-8 px-5 py-8 md:px-8 md:py-10">
-      <header className="flex flex-col gap-1">
-        <h2 className="text-h1">{UI.inbox.title}</h2>
-        <p className="text-fg-soft">{UI.inbox.concept}</p>
+    <div className="mx-auto flex max-w-[580px] flex-col gap-8 px-6 py-8 md:px-8 md:py-10">
+      <header className="flex flex-col gap-3">
+        <h2 className="text-titular font-normal">{UI.inbox.title}</h2>
+        <p className="text-entrada font-light text-ceniza">{UI.inbox.concept}</p>
       </header>
 
-      <div className="flex flex-col gap-2">
-        <form onSubmit={submit} className="flex flex-col gap-3 sm:flex-row sm:items-end">
-          <label htmlFor="inbox-input" className="sr-only">
-            {UI.inbox.placeholder}
+      <div className="flex flex-col gap-3">
+        <form onSubmit={submit} className="flex flex-col gap-4">
+          <label htmlFor="inbox-input" className="etiqueta text-niebla">
+            {UI.inbox.dropLabel}
           </label>
           <textarea
             id="inbox-input"
@@ -68,39 +68,59 @@ export function InboxView({ focusKey, revealKey = 0 }: { focusKey: number; revea
               if (e.key === "Enter" && !e.shiftKey) submit(e);
             }}
             placeholder={UI.inbox.placeholder}
-            className="min-h-20 flex-1 resize-none rounded-sm border border-line bg-raised px-4 py-3 text-body text-fg placeholder:text-fg-muted focus:border-blue focus:outline-none"
+            className="min-h-16 resize-none border-b border-trazo bg-transparent py-2 text-entrada font-light text-crema placeholder:text-niebla focus:border-chispa focus:outline-none"
           />
-          <button
-            type="submit"
-            disabled={!draft.trim()}
-            className="min-h-11 rounded-sm bg-blue px-5 font-medium text-midnight transition-[opacity,transform] duration-150 ease-out active:scale-[0.98] disabled:opacity-40"
-          >
-            {UI.inbox.capture}
-          </button>
+          <div className="flex items-center gap-4">
+            <button
+              type="submit"
+              disabled={!draft.trim()}
+              className={`min-h-11 rounded-full px-6 text-[13px] font-semibold tracking-[0.06em] uppercase transition-[background-color,border-color,color,filter,transform] duration-150 ease-out active:scale-[0.98] ${
+                draft.trim()
+                  ? "bg-iris text-sobre-iris hover:brightness-110"
+                  : "border border-trazo text-niebla"
+              }`}
+            >
+              {UI.inbox.capture}
+            </button>
+            <p aria-live="polite" className="flex items-center gap-2 text-chico text-ceniza">
+              {confirmed ? (
+                <>
+                  <span aria-hidden="true" className="size-2 rounded-full bg-chispa" />
+                  {UI.inbox.raw}
+                </>
+              ) : null}
+            </p>
+          </div>
         </form>
-        <p aria-live="polite" className="min-h-5 text-small text-fg-soft">
-          {confirmed ? UI.inbox.raw : ""}
-        </p>
-        {suggestions.map((sg) => (
-          <button
-            key={sg.text}
-            type="button"
-            onClick={() => drop(sg.text, sg.parsed)}
-            className="min-h-11 rounded-sm border border-line px-3 py-2 text-left text-small text-fg-soft transition-colors duration-150 hover:bg-surface hover:text-fg"
-          >
-            {sg.label ?? sg.text}
-          </button>
-        ))}
+        {suggestions.length ? (
+          <div className="flex flex-wrap gap-2 pt-1">
+            {suggestions.map((sg) => (
+              <button
+                key={sg.text}
+                type="button"
+                onClick={() => drop(sg.text, sg.parsed)}
+                className="min-h-11 max-w-full truncate rounded-full border border-trazo px-4 text-left text-chico text-ceniza transition-[border-color,color] duration-150 hover:border-crema hover:text-crema"
+              >
+                {sg.label ?? sg.text}
+              </button>
+            ))}
+          </div>
+        ) : null}
       </div>
 
       {stream.length ? (
-        <ul aria-label={UI.inbox.stream} className="flex flex-col gap-5">
+        <ul aria-label={UI.inbox.stream} className="flex flex-col">
           {stream.map((entry) => {
             const quoted = showsSource(entry);
             return (
-              <li key={entry.key} className="flex flex-col">
-                {quoted ? <p className="mb-1 text-fg-soft">«{entry.source}»</p> : null}
-                <ul className={`flex flex-col ${quoted ? "border-l border-line pl-4" : ""}`}>
+              <li key={entry.key} className="punteado-t flex flex-col gap-2 py-4">
+                {quoted ? (
+                  <p className="text-entrada font-light text-ceniza">«{entry.source}»</p>
+                ) : null}
+                {/* Lo que Polaris sacó de tu frase, colgado de ella como de una sinapsis. */}
+                <ul
+                  className={`flex flex-col ${quoted ? "ml-1 border-l border-dashed border-sinapsis pl-4" : ""}`}
+                >
                   {entry.items.map((item) => (
                     <ItemRow
                       key={item.id}
@@ -118,7 +138,7 @@ export function InboxView({ focusKey, revealKey = 0 }: { focusKey: number; revea
           })}
         </ul>
       ) : (
-        <p className="text-fg-soft">{UI.inbox.empty}</p>
+        <p className="etiqueta text-ceniza">{UI.inbox.empty}</p>
       )}
     </div>
   );

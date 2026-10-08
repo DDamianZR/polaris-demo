@@ -1,4 +1,4 @@
-import { Bell, CheckCircle, Circle, Lightbulb } from "@phosphor-icons/react";
+import { Bell, Check, Lightbulb } from "@phosphor-icons/react";
 import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef } from "react";
 import { relativeDay, UI } from "../copy/es";
@@ -21,15 +21,42 @@ type Props = {
   revealKey?: number;
 };
 
-function Icon({ item }: { item: Item }) {
-  const props = { size: 20, className: "mt-0.5 shrink-0 text-fg-muted", "aria-hidden": true };
-  if (item.status === "done") return <CheckCircle {...props} />;
-  if (item.kind === "reminder") return <Bell {...props} />;
-  if (item.kind === "idea") return <Lightbulb {...props} />;
-  return <Circle {...props} />;
+/** La neurona del pendiente, como en el mapa de ideas: suelta en ámbar, conectada en crema. */
+function Glyph({ item }: { item: Item }) {
+  const box = "mt-1 grid size-4 shrink-0 place-items-center";
+  if (item.status === "done") {
+    return (
+      <span className={box}>
+        <Check size={14} weight="regular" className="text-sinapsis-texto" aria-hidden="true" />
+      </span>
+    );
+  }
+  if (item.kind === "reminder") {
+    return (
+      <span className={box}>
+        <Bell size={15} weight="light" className="text-ceniza" aria-hidden="true" />
+      </span>
+    );
+  }
+  if (item.kind === "idea") {
+    return (
+      <span className={box}>
+        <Lightbulb size={15} weight="light" className="text-chispa" aria-hidden="true" />
+      </span>
+    );
+  }
+  return (
+    <span className={box} aria-hidden="true">
+      {item.status === "inbox" ? (
+        <span className="size-2.5 rounded-full border border-chispa" />
+      ) : (
+        <span className="size-2 rounded-full bg-crema" />
+      )}
+    </span>
+  );
 }
 
-/** Una tarea como la pide docs/ux.md: el título y solo la metadata que importa. */
+/** Un pendiente: el título y solo la metadata que importa. */
 export function ItemRow({
   item,
   today,
@@ -47,17 +74,14 @@ export function ItemRow({
     if (reveal)
       ref.current?.scrollIntoView({ block: "nearest", behavior: reduce ? "auto" : "smooth" });
   }, [revealKey]);
+
+  const loose = showUndated && item.dueDay === null && item.status !== "done";
   const when =
     showDay && item.dueDay !== null
       ? `${relativeDay(item.dueDay, today)}${item.dueAt !== null ? ` ${hhmm(item.dueAt)}` : ""}`
-      : showUndated && item.dueDay === null
-        ? UI.inbox.undated
-        : null;
-  const meta = [
-    when,
-    item.context ?? item.area,
-    item.estimateMin ? duration(item.estimateMin) : null,
-  ].filter(Boolean);
+      : null;
+  const rest = [item.context ?? item.area, item.estimateMin ? duration(item.estimateMin) : null];
+  const meta = [when, ...rest].filter(Boolean);
   const done = item.status === "done";
 
   return (
@@ -69,29 +93,38 @@ export function ItemRow({
           : {
               opacity: 0,
               y: 6,
-              backgroundColor: "color-mix(in srgb, var(--color-blue) 16%, transparent)",
+              backgroundColor: "color-mix(in srgb, var(--color-chispa) 12%, transparent)",
             }
       }
       animate={{
         opacity: 1,
         y: 0,
-        backgroundColor: "color-mix(in srgb, var(--color-blue) 0%, transparent)",
+        backgroundColor: "color-mix(in srgb, var(--color-chispa) 0%, transparent)",
       }}
       transition={{ duration: 0.22, ease: EASE, backgroundColor: { duration: 1.6 } }}
-      className="-mx-2 flex gap-3 rounded-sm px-2 py-2"
+      className="-mx-3 flex gap-3 rounded-globo px-3 py-2.5"
     >
-      <Icon item={item} />
+      <Glyph item={item} />
       <div className="min-w-0">
-        <p className={done ? "text-fg-muted line-through decoration-faint" : ""}>{item.title}</p>
-        {meta.length ? <p className="text-small text-fg-muted">{meta.join(" · ")}</p> : null}
+        <p className={done ? "text-niebla line-through decoration-linea" : "text-crema"}>
+          {item.title}
+        </p>
+        {loose || meta.length ? (
+          <p className="text-chico text-niebla">
+            {loose ? <span className="text-chispa">{UI.inbox.undated}</span> : null}
+            {loose && meta.length ? " · " : null}
+            {meta.join(" · ")}
+          </p>
+        ) : null}
       </div>
     </motion.li>
   );
 }
 
+/** Etiqueta de sección: mayúsculas tenues sobre un punteado que separa la estructura. */
 export function SectionLabel({ id, children }: { id: string; children: string }) {
   return (
-    <h3 id={id} className="text-caption text-fg-muted">
+    <h3 id={id} className="etiqueta text-niebla">
       {children}
     </h3>
   );

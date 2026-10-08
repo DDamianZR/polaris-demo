@@ -1,7 +1,7 @@
 # POLARIS — Sistema UX/UI
 
-> Es la fuente de verdad del diseño de la demo.
-> Los únicos ajustes aprobados están en `PLAN.md`, sección "Ajustes de contraste".
+> El concepto, la arquitectura, el tono y la accesibilidad de este documento siguen vigentes.
+> La paleta, la tipografía y la composición las reemplaza `docs/diseno.md` (Sinapsis).
 
 ## Concepto de marca
 

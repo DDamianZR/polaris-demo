@@ -1,4 +1,4 @@
-import { PaperPlaneRight } from "@phosphor-icons/react";
+import { ArrowUp } from "@phosphor-icons/react";
 import { motion, useReducedMotion } from "motion/react";
 import { type FormEvent, Fragment, type KeyboardEvent, useEffect, useRef, useState } from "react";
 import { useDemo } from "../app/DemoContext";
@@ -52,14 +52,14 @@ export function ChatPanel({ className = "" }: { className?: string }) {
     if (event.key === "Enter" && !event.shiftKey) submit(event);
   }
 
+  const ready = draft.trim().length > 0;
+
   return (
-    <section aria-label={UI.chat.log} className={`min-h-0 min-w-0 flex-col bg-raised ${className}`}>
-      <header className="flex h-16 shrink-0 items-center gap-3 border-b border-line px-4">
-        <Isotipo size={32} />
-        <div className="leading-tight">
-          <p className="font-medium">{UI.chat.title}</p>
-          <p className="text-caption font-normal text-fg-muted">{UI.chat.caption}</p>
-        </div>
+    <section aria-label={UI.chat.log} className={`min-h-0 min-w-0 flex-col ${className}`}>
+      <header className="punteado-b flex h-14 shrink-0 items-center gap-3 px-5">
+        <Isotipo size={22} />
+        <p className="font-medium">{UI.chat.title}</p>
+        <p className="etiqueta ml-auto text-niebla">{UI.chat.channel}</p>
       </header>
 
       <div
@@ -70,9 +70,9 @@ export function ChatPanel({ className = "" }: { className?: string }) {
           const log = e.currentTarget;
           pinned.current = log.scrollHeight - log.scrollTop - log.clientHeight < 80;
         }}
-        className="min-h-0 flex-1 overflow-y-auto px-3 py-4"
+        className="min-h-0 flex-1 overflow-y-auto px-5 py-6"
       >
-        <div ref={contentRef} className="flex min-h-full flex-col gap-3">
+        <div ref={contentRef} className="flex min-h-full flex-col gap-6">
           {messages.length === 0 ? <EmptyChat firstAt={nextTime(session)} /> : null}
           {messages.map((message, i) => {
             const prev = messages[i - 1];
@@ -82,15 +82,23 @@ export function ChatPanel({ className = "" }: { className?: string }) {
             return (
               <Fragment key={message.id}>
                 {newDay ? (
-                  <p className="my-1 self-center text-caption text-fg-muted">
-                    {shortDate(dayOf(message.at))}
-                  </p>
+                  <div className="flex items-center gap-3">
+                    <span
+                      aria-hidden="true"
+                      className="flex-1 border-t border-dashed border-linea"
+                    />
+                    <p className="etiqueta text-niebla">{shortDate(dayOf(message.at))}</p>
+                    <span
+                      aria-hidden="true"
+                      className="flex-1 border-t border-dashed border-linea"
+                    />
+                  </div>
                 ) : null}
                 <motion.div
                   className="flex flex-col"
                   initial={reduce || !isNew ? false : { opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.2, ease: EASE }}
+                  transition={{ duration: 0.22, ease: EASE }}
                 >
                   <MessageBubble message={message} isNew={isNew} onPress={press} />
                 </motion.div>
@@ -100,17 +108,17 @@ export function ChatPanel({ className = "" }: { className?: string }) {
         </div>
       </div>
 
-      <div className="flex shrink-0 flex-col gap-2 border-t border-line p-3">
+      <div className="punteado-t flex shrink-0 flex-col gap-3 px-5 pt-4 pb-5">
         {suggestions.length > 0 ? (
-          <div className="flex flex-col gap-1.5">
-            <p className="text-caption text-fg-muted">{UI.chat.suggestions}</p>
-            <div className="-mx-3 flex gap-1.5 overflow-x-auto px-3 [mask-image:linear-gradient(to_right,black_85%,transparent)] [scrollbar-width:none]">
+          <div className="flex flex-col gap-2">
+            <p className="etiqueta text-niebla">{UI.chat.suggestions}</p>
+            <div className="-mx-5 flex gap-2 overflow-x-auto px-5 [mask-image:linear-gradient(to_right,black_85%,transparent)] [scrollbar-width:none]">
               {suggestions.map((sg) => (
                 <button
                   key={sg.text}
                   type="button"
                   onClick={() => send(sg.text, sg.parsed)}
-                  className="min-h-11 max-w-[260px] shrink-0 truncate rounded-sm border border-line bg-base px-3 text-left text-small text-fg-soft transition-[background-color,color,transform] duration-150 ease-out hover:bg-surface hover:text-fg active:scale-[0.99]"
+                  className="min-h-11 max-w-[280px] shrink-0 truncate rounded-full border border-trazo px-4 text-left text-chico text-ceniza transition-[border-color,color,transform] duration-150 ease-out hover:border-crema hover:text-crema active:scale-[0.99]"
                 >
                   {sg.label ?? sg.text}
                 </button>
@@ -118,7 +126,7 @@ export function ChatPanel({ className = "" }: { className?: string }) {
             </div>
           </div>
         ) : null}
-        <form onSubmit={submit} className="flex items-end gap-2">
+        <form onSubmit={submit} className="flex items-end gap-3">
           <label className="sr-only" htmlFor="chat-input">
             {UI.chat.placeholder}
           </label>
@@ -129,15 +137,17 @@ export function ChatPanel({ className = "" }: { className?: string }) {
             onChange={(e) => setDraft(e.target.value)}
             onKeyDown={onKeyDown}
             placeholder={UI.chat.placeholder}
-            className="max-h-32 min-h-11 flex-1 resize-none rounded-sm border border-line bg-base px-3 py-2.5 text-body text-fg placeholder:text-fg-muted focus:border-blue focus:outline-none"
+            className="max-h-32 min-h-11 flex-1 resize-none border-b border-trazo bg-transparent py-2.5 text-cuerpo text-crema placeholder:text-niebla focus:border-chispa focus:outline-none"
           />
           <button
             type="submit"
             aria-label={UI.chat.send}
-            disabled={!draft.trim()}
-            className="grid size-11 shrink-0 place-items-center rounded-sm bg-blue text-midnight transition-[opacity,transform] duration-150 ease-out active:scale-[0.96] disabled:opacity-40"
+            disabled={!ready}
+            className={`grid size-11 shrink-0 place-items-center rounded-full transition-[background-color,border-color,color,transform] duration-150 ease-out active:scale-[0.96] ${
+              ready ? "bg-iris text-sobre-iris" : "border border-trazo text-niebla"
+            }`}
           >
-            <PaperPlaneRight size={20} weight="regular" />
+            <ArrowUp size={18} weight="regular" aria-hidden="true" />
           </button>
         </form>
       </div>
@@ -148,10 +158,10 @@ export function ChatPanel({ className = "" }: { className?: string }) {
 /** Antes del primer mensaje: qué va a pasar y cuándo. */
 function EmptyChat({ firstAt }: { firstAt: number | null }) {
   return (
-    <div className="m-auto flex max-w-[240px] flex-col gap-1 text-center">
-      <p className="text-fg-soft">{UI.chat.emptyTitle}</p>
+    <div className="m-auto flex max-w-[260px] flex-col gap-2 text-center">
+      <p className="etiqueta text-ceniza">{UI.chat.emptyTitle}</p>
       {firstAt !== null ? (
-        <p className="text-small text-fg-muted">{UI.chat.emptyHint(hhmm(firstAt))}</p>
+        <p className="text-chico font-light text-niebla">{UI.chat.emptyHint(hhmm(firstAt))}</p>
       ) : null}
     </div>
   );

@@ -278,6 +278,8 @@ export const UI = {
     send: "Enviar",
     edited: "editado",
     log: "Conversación con Polaris",
+    you: "Tú",
+    channel: "En tu Telegram",
     suggestions: "Prueba con",
   },
   controls: {
@@ -289,7 +291,8 @@ export const UI = {
     pause: "Pausar",
     chapters: "Capítulos",
     goTo: (n: number, title: string) => `Ir al capítulo ${n}: ${title}`,
-    position: (n: number, total: number) => `${n}/${total}`,
+    position: (n: number, total: number) =>
+      `${String(n).padStart(2, "0")} / ${String(total).padStart(2, "0")}`,
     skipDays: "Saltar al viernes",
     outage: "Apagar Polaris 5 horas",
   },
@@ -324,10 +327,19 @@ export const UI = {
     concept: "Lo que ya no necesitas recordar.",
     placeholder: "Escribe lo que sea…",
     capture: "Capturar",
+    dropLabel: "Suelta lo que sea",
     stream: "Lo que has capturado",
     undated: "Sin fecha",
     raw: "Lo tenemos. Lo ordenamos después.",
     empty: "Todo despejado.",
+  },
+  brain: {
+    label: "Mapa de ideas",
+    ideas: "ideas",
+    connected: "conectadas",
+    loose: "sueltas",
+    describe: (ideas: number, connected: number, loose: number) =>
+      `Mapa de ideas: ${ideas} ideas, ${connected} conectadas a su zona y ${loose} sueltas.`,
   },
   /** `when` es la hora del día en que pasa: el itinerario de la demo. */
   chapters: {

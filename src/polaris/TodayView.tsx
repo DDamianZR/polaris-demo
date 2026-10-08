@@ -15,62 +15,59 @@ export function TodayView({ revealKey = 0 }: { revealKey?: number }) {
 
   const elapsed = current ? (now - current.start) / (current.end - current.start) : 0;
   const [firstNext] = next;
+  const section = "punteado-t flex flex-col gap-3 pt-5";
 
   return (
-    <div className="mx-auto flex max-w-[640px] flex-col gap-10 px-5 py-8 md:px-8 md:py-10">
-      <header className="flex flex-col gap-1">
-        <h2 className="text-h1">{view.greeting}</h2>
-        <p className="text-h3 font-normal text-fg-soft">
+    <div className="mx-auto flex max-w-[580px] flex-col gap-8 px-6 py-8 md:px-8 md:py-10">
+      <header className="flex flex-col gap-3">
+        <h2 className="text-titular font-normal">{view.greeting}</h2>
+        <p className="text-entrada font-light text-ceniza">
           {calm ? UI.today.calm : UI.today.onTrack}
         </p>
       </header>
 
-      <section aria-labelledby="today-now" className="flex flex-col gap-3">
+      <section aria-labelledby="today-now" className={section}>
         <SectionLabel id="today-now">{UI.today.now}</SectionLabel>
         {current ? (
-          <div className="flex gap-4">
-            <span
-              aria-hidden="true"
-              className="w-[3px] shrink-0 rounded-full"
-              style={{
-                backgroundImage: "linear-gradient(180deg, var(--color-sky), var(--color-violet))",
-              }}
-            />
-            <div className="flex min-w-0 flex-col gap-1">
-              <p className="text-small text-fg-muted tabular-nums">{hhmm(current.start)}</p>
-              <p className="text-h2">{current.context ?? current.title}</p>
-              {current.context ? <p className="text-fg-soft">{current.title}</p> : null}
-              <p className="mt-1 text-caption text-fg-soft">
-                {UI.today.inProgress(duration(current.end - now))}
-              </p>
-              <div className="mt-1 h-0.5 w-48 overflow-hidden rounded-full bg-line">
-                <div
-                  className="h-full rounded-full"
-                  style={{
-                    width: `${Math.round(elapsed * 100)}%`,
-                    backgroundImage: "var(--gradient-brand)",
-                  }}
-                />
-              </div>
+          <div className="flex min-w-0 flex-col gap-1.5">
+            <p className="etiqueta cifras text-niebla">{hhmm(current.start)}</p>
+            <p className="text-titulo font-normal">{current.context ?? current.title}</p>
+            {current.context ? <p className="font-light text-ceniza">{current.title}</p> : null}
+            <p className="etiqueta mt-2 text-chispa">
+              {UI.today.inProgress(duration(current.end - now))}
+            </p>
+            {/* El avance es una sinapsis: el tramo recorrido se enciende y la chispa va al frente. */}
+            <div className="relative mt-2 h-2 w-56" aria-hidden="true">
+              <span className="absolute inset-x-0 top-1 border-t border-dashed border-trazo" />
+              <span
+                className="absolute top-1 left-0 border-t border-chispa"
+                style={{ width: `${Math.round(elapsed * 100)}%` }}
+              />
+              <span
+                className="absolute top-0 size-2 -translate-x-1/2 rounded-full bg-chispa"
+                style={{ left: `${Math.round(elapsed * 100)}%` }}
+              />
             </div>
           </div>
         ) : (
-          <p className="text-h3 font-normal text-fg-soft">
+          <p className="text-titulo font-light text-ceniza">
             {firstNext ? UI.today.freeUntil(hhmm(firstNext.start)) : UI.today.freeRest}
           </p>
         )}
       </section>
 
       {next.length > 0 ? (
-        <section aria-labelledby="today-after" className="flex flex-col gap-3">
+        <section aria-labelledby="today-after" className={section}>
           <SectionLabel id="today-after">{UI.today.after}</SectionLabel>
-          <ul className="flex flex-col gap-2">
+          <ul className="flex flex-col gap-2.5">
             {next.map((entry) => (
-              <li key={entry.id} className="grid grid-cols-[56px_1fr] gap-3">
-                <span className="text-fg-muted tabular-nums">{hhmm(entry.start)}</span>
+              <li key={entry.id} className="grid grid-cols-[64px_1fr] gap-3">
+                <span className="cifras text-niebla">{hhmm(entry.start)}</span>
                 <span className="min-w-0">
                   {entry.context ?? entry.title}
-                  {entry.context ? <span className="text-fg-muted"> · {entry.title}</span> : null}
+                  {entry.context ? (
+                    <span className="font-light text-ceniza"> · {entry.title}</span>
+                  ) : null}
                 </span>
               </li>
             ))}
@@ -79,9 +76,9 @@ export function TodayView({ revealKey = 0 }: { revealKey?: number }) {
       ) : null}
 
       {view.pendingToday.length > 0 ? (
-        <section aria-labelledby="today-pending" className="flex flex-col gap-1">
+        <section aria-labelledby="today-pending" className={section}>
           <SectionLabel id="today-pending">{UI.today.pending}</SectionLabel>
-          <ul className="mt-2 flex flex-col">
+          <ul className="flex flex-col">
             {view.pendingToday.map((item) => (
               <ItemRow
                 key={item.id}
@@ -98,9 +95,9 @@ export function TodayView({ revealKey = 0 }: { revealKey?: number }) {
       ) : null}
 
       {view.upcoming.length > 0 ? (
-        <section aria-labelledby="today-upcoming" className="flex flex-col gap-1">
+        <section aria-labelledby="today-upcoming" className={section}>
           <SectionLabel id="today-upcoming">{UI.today.upcoming}</SectionLabel>
-          <ul className="mt-2 flex flex-col">
+          <ul className="flex flex-col">
             {view.upcoming.map((item) => (
               <ItemRow
                 key={item.id}
@@ -115,7 +112,7 @@ export function TodayView({ revealKey = 0 }: { revealKey?: number }) {
         </section>
       ) : null}
 
-      <p className="text-small text-fg-muted">
+      <p className="etiqueta punteado-t pt-5 text-niebla">
         {UI.today.summary(counts.pending, counts.habits, counts.events)}
       </p>
     </div>

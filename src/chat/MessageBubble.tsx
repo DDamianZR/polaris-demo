@@ -16,7 +16,7 @@ function Rich({ text }: { text: string }) {
     const bold = /^<b>([^<]*)<\/b>$/.exec(chunk);
     parts.push(
       bold ? (
-        <strong key={offset} className="font-semibold">
+        <strong key={offset} className="font-semibold text-crema">
           {bold[1]}
         </strong>
       ) : (
@@ -35,6 +35,10 @@ type Props = {
   onPress: (press: Press, messageId: string) => void;
 };
 
+/**
+ * Un mensaje, en registro editorial: Polaris habla sin globo, con su etiqueta; lo tuyo va en un
+ * globo de tinta. Los botones del bot son píldoras fantasma.
+ */
 export function MessageBubble({ message, isNew, onPress }: Props) {
   const reduce = useReducedMotion();
   const animateEdit = isNew && message.editedFrom !== null && !reduce;
@@ -48,55 +52,54 @@ export function MessageBubble({ message, isNew, onPress }: Props) {
 
   if (message.from === "system") {
     return (
-      <p className="mx-auto my-2 max-w-[90%] rounded-sm bg-surface px-3 py-2 text-center text-caption text-fg-soft">
-        {message.text}
-      </p>
+      <div className="flex items-center gap-3 py-1">
+        <span aria-hidden="true" className="flex-1 border-t border-dashed border-linea" />
+        <p className="max-w-[80%] text-center text-chico text-ceniza">{message.text}</p>
+        <span aria-hidden="true" className="flex-1 border-t border-dashed border-linea" />
+      </div>
     );
   }
 
   const mine = message.from === "user";
   const text = showFinal ? message.text : (message.editedFrom ?? message.text);
+  const stamp = [
+    mine ? UI.chat.you : UI.chat.title,
+    hhmm(message.at),
+    message.editedFrom && showFinal ? UI.chat.edited : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
     <div
-      className={`flex max-w-[88%] flex-col gap-1.5 ${mine ? "self-end items-end" : "self-start"}`}
+      className={`flex max-w-[92%] flex-col gap-2 ${mine ? "items-end self-end" : "self-start"}`}
     >
+      <p className="etiqueta cifras text-niebla">{stamp}</p>
       <motion.div
         layout={reduce ? false : "size"}
         transition={{ duration: 0.2, ease: EASE }}
-        className={`relative rounded-md px-3 py-2 ${
-          mine
-            ? "rounded-br-xs bg-[color-mix(in_srgb,var(--color-blue)_22%,var(--color-surface))]"
-            : "rounded-bl-xs bg-surface"
-        }`}
+        className={`relative ${mine ? "rounded-globo rounded-br-[6px] bg-tinta px-4 py-2.5" : ""}`}
       >
-        <p className="whitespace-pre-wrap break-words text-body">
+        <p className="whitespace-pre-wrap break-words text-cuerpo text-crema">
           <Rich text={text} />
         </p>
-        <p className="mt-0.5 text-right text-caption font-normal text-fg-muted tabular-nums">
-          {message.editedFrom && showFinal ? `${UI.chat.edited} · ` : ""}
-          {hhmm(message.at)}
-        </p>
         {message.reaction ? (
-          <span className="absolute -bottom-3 left-2 rounded-full border border-line bg-elevated px-1.5 text-caption">
+          <span className="absolute -bottom-3 left-3 rounded-full border border-linea bg-vacio px-1.5 text-chico">
             {message.reaction}
           </span>
         ) : null}
       </motion.div>
 
       {message.buttons.length > 0 && showFinal ? (
-        <div className="flex w-full flex-col gap-1.5">
+        <div className="mt-1 flex w-full flex-col gap-2">
           {message.buttons.map((row) => (
-            <div
-              key={row.map((b) => b.label).join("|")}
-              className="grid auto-cols-fr grid-flow-col gap-1.5"
-            >
+            <div key={row.map((b) => b.label).join("|")} className="flex flex-wrap gap-2">
               {row.map((button) => (
                 <button
                   key={button.label}
                   type="button"
                   onClick={() => onPress(button.press, message.id)}
-                  className="min-h-11 rounded-sm border border-line bg-raised px-2 text-small text-fg transition-[background-color,transform] duration-150 ease-out hover:bg-elevated active:scale-[0.98]"
+                  className="min-h-11 rounded-full border border-trazo px-4 text-chico text-crema transition-[border-color,background-color,transform] duration-150 ease-out hover:border-crema hover:bg-crema/5 active:scale-[0.98]"
                 >
                   {button.label}
                 </button>
