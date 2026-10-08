@@ -264,6 +264,15 @@ export function relativeDay(day: number, today: number): string {
   return shortDate(day);
 }
 
+/** Para cuándo es algo, dicho como plazo: "Para mañana", "Para el viernes", "Era para ayer". */
+export function dueLabel(day: number, today: number): string {
+  if (day === today) return "Para hoy";
+  if (day === today + 1) return "Para mañana";
+  if (day === today - 1) return "Era para ayer";
+  const when = day > today && day - today < 7 ? (DAY_LONG[weekday(day)] ?? "") : shortDate(day);
+  return day < today ? `Era para el ${when}` : `Para el ${when}`;
+}
+
 /** "mar 13 oct, 07:35" para el reloj de la demo. */
 export const clockLabel = (t: Minute) => `${shortDate(Math.floor(t / 1440))}, ${hhmm(t)}`;
 
@@ -304,6 +313,7 @@ export const UI = {
     orbit: "Orbit",
     direction: "Direction",
     history: "History",
+    more: "Más",
   },
   today: {
     onTrack: "Tu día está bajo control.",
@@ -332,6 +342,39 @@ export const UI = {
     undated: "Sin fecha",
     raw: "Lo tenemos. Lo ordenamos después.",
     empty: "Todo despejado.",
+  },
+  orbit: {
+    title: "¿Qué está alrededor de tu atención?",
+    concept: "Lo urgente queda cerca del centro. Lo que puede esperar, en las orillas.",
+    center: "Tú",
+    rings: ["Hoy", "Próximos días", "Esta semana", "Más adelante"],
+    map: "Mapa de tu atención",
+    asList: "Ver como lista",
+    asMap: "Ver como mapa",
+    overdue: "atrasado",
+    legend: {
+      dated: "Con fecha",
+      loose: "Suelto, sin ordenar",
+      overdue: "Se pasó su fecha",
+    },
+    empty: "No hay nada orbitando. Todo despejado.",
+    week: "Tu semana",
+    focus: (planned: string, max: string) => `${planned} de ${max}`,
+    overloaded: "Muy cargado",
+    free: "Libre",
+  },
+  direction: {
+    title: "¿Hacia dónde vas?",
+    concept: "Lo que estás construyendo, más allá de esta semana.",
+    goal: "Objetivo",
+    project: "Proyecto",
+    next: "Esto es lo siguiente",
+    moving: "Vas avanzando.",
+    finished: "Listo. No queda nada pendiente.",
+    noSteps: "Todavía sin pasos.",
+    steps: (done: number, total: number) => `${done} de ${total} pasos`,
+    finishes: (day: string) => `Lo terminas el ${day}.`,
+    empty: "Todavía no hay objetivos. Cuando pegues un plan, aquí aparece.",
   },
   history: {
     title: "¿Qué ha ocurrido?",

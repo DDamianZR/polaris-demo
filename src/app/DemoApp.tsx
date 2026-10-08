@@ -1,4 +1,4 @@
-import { ChatCircle } from "@phosphor-icons/react";
+import { ChatCircle, DotsThree } from "@phosphor-icons/react";
 import { MotionConfig } from "motion/react";
 import { useEffect, useState } from "react";
 import { Isotipo } from "../brand/Isotipo";
@@ -6,7 +6,7 @@ import { Wordmark } from "../brand/Wordmark";
 import { ChatPanel } from "../chat/ChatPanel";
 import { UI } from "../copy/es";
 import { CHAPTERS } from "../demo/script";
-import { CHAPTER_VIEW, NAV, type View } from "../polaris/nav";
+import { CHAPTER_VIEW, MOBILE_PRIMARY, NAV, type View } from "../polaris/nav";
 import { PolarisPanel } from "../polaris/PolarisPanel";
 import { ChapterBar } from "./ChapterBar";
 import { DayClock } from "./DayClock";
@@ -45,12 +45,15 @@ function Layout() {
   const [unseen, setUnseen] = useState(false);
   const [focusKey, setFocusKey] = useState(0);
   const [revealKey, setRevealKey] = useState(0);
+  /** El menú "Más" del cel, con las vistas que no caben en la barra. */
+  const [moreOpen, setMoreOpen] = useState(false);
 
   const index = chapterIndex(session);
   useEffect(() => {
     const key = CHAPTERS[index]?.key;
     setView((key && CHAPTER_VIEW[key]) || "today");
     setMobileChat(true);
+    setMoreOpen(false);
   }, [index]);
 
   // En el cel, si algo cae en Polaris mientras ves el chat, la pestaña lo avisa con un punto.
@@ -67,6 +70,7 @@ function Layout() {
   function openView(next: View) {
     setView(next);
     setMobileChat(false);
+    setMoreOpen(false);
     setRevealKey((k) => k + 1);
   }
 
@@ -100,7 +104,7 @@ function Layout() {
         </aside>
         <main className="flex min-h-0 min-w-0 flex-col">
           <ChapterBar size="large" className="punteado-b px-10 pt-7 pb-6" />
-          <div className="grid min-h-0 flex-1 grid-cols-[minmax(340px,420px)_minmax(0,1fr)]">
+          <div className="grid min-h-0 flex-1 grid-cols-[minmax(320px,26vw)_minmax(0,1fr)]">
             <ChatPanel className="punteado-r flex" />
             {panel(true)}
           </div>
@@ -152,25 +156,63 @@ function Layout() {
       <div className="flex min-h-0 flex-1">
         {mobileChat ? <ChatPanel className="flex flex-1" /> : panel(false, "flex-1")}
       </div>
-      <nav
-        aria-label={UI.nav.label}
-        className="punteado-t grid shrink-0 grid-cols-4 pb-[env(safe-area-inset-bottom)]"
-      >
-        <TabButton active={mobileChat} label={UI.nav.chat} onClick={() => setMobileChat(true)}>
-          <ChatCircle size={20} weight="light" aria-hidden="true" />
-        </TabButton>
-        {NAV.map(({ key, label, icon: Icon }) => (
+      <div className="relative shrink-0">
+        {moreOpen ? (
+          <div className="punteado-t absolute inset-x-0 bottom-full flex flex-col bg-vacio px-4 py-2">
+            {NAV.filter((n) => !MOBILE_PRIMARY.includes(n.key)).map(
+              ({ key, label, icon: Icon }) => (
+                <button
+                  key={key}
+                  type="button"
+                  aria-current={!mobileChat && view === key ? "page" : undefined}
+                  onClick={() => openView(key)}
+                  className={`etiqueta flex min-h-12 items-center gap-3 ${
+                    !mobileChat && view === key ? "text-crema" : "text-ceniza"
+                  }`}
+                >
+                  <Icon size={18} weight="light" aria-hidden="true" />
+                  {label}
+                </button>
+              ),
+            )}
+          </div>
+        ) : null}
+        <nav
+          aria-label={UI.nav.label}
+          className="punteado-t grid grid-cols-4 pb-[env(safe-area-inset-bottom)]"
+        >
           <TabButton
-            key={key}
-            active={!mobileChat && view === key}
-            label={label}
-            dot={unseen && key === view}
-            onClick={() => openView(key)}
+            active={mobileChat}
+            label={UI.nav.chat}
+            onClick={() => {
+              setMobileChat(true);
+              setMoreOpen(false);
+            }}
           >
-            <Icon size={20} weight="light" aria-hidden="true" />
+            <ChatCircle size={20} weight="light" aria-hidden="true" />
           </TabButton>
-        ))}
-      </nav>
+          {NAV.filter((n) => MOBILE_PRIMARY.includes(n.key)).map(({ key, label, icon: Icon }) => (
+            <TabButton
+              key={key}
+              active={!mobileChat && view === key}
+              label={label}
+              dot={unseen && key === view}
+              onClick={() => openView(key)}
+            >
+              <Icon size={20} weight="light" aria-hidden="true" />
+            </TabButton>
+          ))}
+          <TabButton
+            active={!mobileChat && !MOBILE_PRIMARY.includes(view)}
+            label={UI.nav.more}
+            dot={unseen && !MOBILE_PRIMARY.includes(view)}
+            expanded={moreOpen}
+            onClick={() => setMoreOpen((open) => !open)}
+          >
+            <DotsThree size={20} weight="light" aria-hidden="true" />
+          </TabButton>
+        </nav>
+      </div>
     </div>
   );
 }
@@ -179,6 +221,8 @@ function TabButton(props: {
   active: boolean;
   label: string;
   dot?: boolean;
+  /** Solo para el botón "Más": dice si su menú está abierto. */
+  expanded?: boolean;
   onClick: () => void;
   children: React.ReactNode;
 }) {
@@ -187,6 +231,7 @@ function TabButton(props: {
       type="button"
       onClick={props.onClick}
       aria-current={props.active ? "page" : undefined}
+      aria-expanded={props.expanded}
       className={`etiqueta relative flex h-16 flex-col items-center justify-center gap-1.5 ${
         props.active ? "text-crema" : "text-niebla"
       }`}

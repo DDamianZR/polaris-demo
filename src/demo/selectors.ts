@@ -1,7 +1,7 @@
 /** Vistas derivadas del estado para la UI. Puras, con `now` inyectado. */
-import { fixedOn, plannedOn } from "./slots";
+import { fixedOn, plannedMinutes, plannedOn } from "./slots";
 import { type DemoState, normalize } from "./state";
-import { DAY, dayOf, type Minute, minuteOfDay } from "./time";
+import { DAY, dayOf, isWeekend, type Minute, minuteOfDay, weekday } from "./time";
 import type { Decision, HabitDay, Item } from "./types";
 
 export type AgendaEntry = {
@@ -190,4 +190,111 @@ export function decisionsByDay(s: DemoState): DecisionDay[] {
 /** Cada hábito con su semana de lunes a domingo. */
 export function habitRows(s: DemoState, now: Minute) {
   return s.habits.map((h) => ({ key: h.key, name: h.name, marks: habitWeek(s, h.key, now) }));
+}
+
+/** Anillos de Orbit, de adentro hacia afuera. */
+export type Ring = 0 | 1 | 2 | 3;
+
+export type OrbitNode = {
+  item: Item;
+  /** 0: hoy o atrasado. 1: próximos 3 días. 2: esta semana. 3: más adelante o sin fecha. */
+  ring: Ring;
+  overdue: boolean;
+};
+
+function ringOf(item: Item, today: number): Ring {
+  if (item.dueDay === null) return 3;
+  const ahead = item.dueDay - today;
+  if (ahead <= 0) return 0;
+  if (ahead <= 3) return 1;
+  if (ahead <= 7) return 2;
+  return 3;
+}
+
+/** Lo que ocupa tu atención: todo lo vivo, con su distancia al centro según qué tan pronto toca. */
+export function orbitNodes(s: DemoState, now: Minute): OrbitNode[] {
+  const today = dayOf(now);
+  return s.items
+    .filter((i) => i.status === "active" || i.status === "inbox")
+    .map((item) => ({
+      item,
+      ring: ringOf(item, today),
+      overdue: item.dueDay !== null && item.dueDay < today,
+    }));
+}
+
+export type DayLoad = {
+  day: number;
+  /** Minutos de foco planeados ese día. */
+  planned: number;
+  max: number;
+  overloaded: boolean;
+  isToday: boolean;
+};
+
+/** Lunes a viernes de la semana de `now`: cuánto foco hay planeado contra el tope del día. */
+export function weekLoad(s: DemoState, now: Minute): DayLoad[] {
+  const today = dayOf(now);
+  const monday = today - weekday(today);
+  return Array.from({ length: 7 }, (_, i) => monday + i)
+    .filter((day) => !isWeekend(day))
+    .map((day) => {
+      const planned = plannedMinutes(s, day);
+      return {
+        day,
+        planned,
+        max: s.settings.focusMaxMin,
+        overloaded: planned > s.settings.focusMaxMin,
+        isToday: day === today,
+      };
+    });
+}
+
+export type ProjectView = {
+  id: string;
+  title: string;
+  /** Lo siguiente por hacer: lo pendiente con la fecha más cercana. */
+  next: Item | null;
+  done: number;
+  total: number;
+  /** Hubo algo hecho esta semana. */
+  moving: boolean;
+  /** En los planes (3 pasos o más, todos con fecha): el día en que terminas. */
+  finishDay: number | null;
+};
+
+export type GoalView = { id: string; title: string; projects: ProjectView[] };
+
+/** Direction: objetivo → proyecto → próxima acción. */
+export function directionTree(s: DemoState, now: Minute): GoalView[] {
+  const weekStart = (dayOf(now) - weekday(dayOf(now))) * DAY;
+  const byNext = (a: Item, b: Item) =>
+    (a.dueDay ?? Number.POSITIVE_INFINITY) - (b.dueDay ?? Number.POSITIVE_INFINITY) ||
+    a.createdAt - b.createdAt;
+  return s.goals.map((goal) => ({
+    id: goal.id,
+    title: goal.title,
+    projects: s.projects
+      .filter((p) => p.goalId === goal.id)
+      .map((project): ProjectView => {
+        const items = s.items.filter((i) => i.projectId === project.id && i.status !== "killed");
+        const pending = items
+          .filter((i) => i.status === "active" || i.status === "inbox")
+          .sort(byNext);
+        const done = items.filter((i) => i.status === "done");
+        const dated = pending.every((i) => i.dueDay !== null);
+        return {
+          id: project.id,
+          title: project.title,
+          next: pending[0] ?? null,
+          done: done.length,
+          total: items.length,
+          moving: done.some((i) => i.doneAt !== null && i.doneAt >= weekStart),
+          finishDay:
+            items.length >= 3 && pending.length > 0 && dated
+              ? Math.max(...pending.map((i) => i.dueDay ?? 0))
+              : null,
+        };
+      }),
+  }));
 }

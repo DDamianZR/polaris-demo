@@ -121,15 +121,20 @@ Aceptada el 2026-10-08 con el rediseño Sinapsis (`docs/diseno.md`): mapa de ide
 
 ### D4 Orbit + Direction
 
-- [ ] **Orbit** ("¿Qué está alrededor de tu atención?"):
+- [x] **Orbit** ("¿Qué está alrededor de tu atención?"):
   - Anillos incompletos, como el isotipo, con tú en el centro. Lo urgente va cerca y lo que puede esperar, en las orillas.
   - Sectores por área.
   - Los nodos se reacomodan con movimiento cuando algo cambia de fecha.
-  - Alternativa "Ver como lista"; en el cel solo hay lista.
-- [ ] **Tu semana** en Orbit: los minutos de foco planeados por día contra el tope, y el día que se pasa, marcado. Es donde se ve la advertencia de la negociación.
-- [ ] **Direction:** Objetivo → Proyecto → Próxima acción, con indicadores humanos ("Vas avanzando", "Esto es lo siguiente", "Lo terminas el…") y sin porcentajes. Los planes aterrizados (F7) aparecen aquí.
-- [ ] **Navegación:** Orbit y Direction entran a las pestañas. En el cel van en "Más", para no pasar de 5. La negociación abre Orbit y el plan abre Direction.
-- [ ] **Pruebas** de los selectores y de la geometría de Orbit.
+  - Alternativa "Ver como lista". En el cel solo hay lista, y también donde el mapa no cabe legible (la tablet).
+- [x] **Tu semana** en Orbit: los minutos de foco planeados por día contra el tope, y el día que se pasa, marcado. Es donde se ve la advertencia de la negociación.
+- [x] **Direction:** Objetivo → Proyecto → Próxima acción, con indicadores humanos ("Vas avanzando", "Esto es lo siguiente", "Lo terminas el…") y sin porcentajes. Los planes aterrizados (F7) aparecen aquí.
+- [x] **Navegación:** Orbit y Direction entran a las pestañas. En el cel van en "Más", para no pasar de 5. La negociación abre Orbit y el plan abre Direction.
+- [x] **Pruebas** de los selectores y de la geometría de Orbit.
+
+**Notas de D4:**
+- En el mapa, los pendientes de un mismo anillo y área se reparten parejo en su tramo: nunca se enciman. El nombre de cada punto aparece al pasar el cursor; la lista lo dice todo sin cursor.
+- La negociación mueve la tesis del anillo de afuera al de próximos días, y el jueves queda marcado "Muy cargado" (5 h 30 de 5 h).
+- Direction dice los plazos como frase ("Para el viernes") y solo cuenta pasos cuando el proyecto tiene más de uno.
 
 ## Decisiones abiertas (con default)
 
