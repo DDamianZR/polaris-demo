@@ -1,6 +1,6 @@
 # Polaris · demo web — Plan
 
-**Estado:** D0 ✅ · D1 en curso · **Actualizado:** 2026-10-07 · **Aprobado:** 2026-10-07
+**Estado:** D0 ✅ · D1 ✅ · D2 sigue · **Actualizado:** 2026-10-07 · **Aprobado:** 2026-10-07
 
 ## Objetivo
 
@@ -59,7 +59,7 @@ Medidos con WCAG sobre Midnight `#070A14`:
 | Fase | Qué queda | Aceptación | Estado |
 |---|---|---|---|
 | D0 Cimientos | Docs, scaffold, tokens, Inter, Phosphor, Biome, Vitest, isotipo SVG y loader | `npm run check` en verde. El SVG se aprueba lado a lado con el `.webp` | ✅ |
-| D1 Motor | fixture, engine, script y reloj, con pruebas por capítulo | `npm test` en verde, todavía sin UI | ⏳ |
+| D1 Motor | fixture, engine, script y reloj, con pruebas por capítulo | `npm test` en verde, todavía sin UI | ✅ |
 | D2 Today + Inbox + chat | Estructura responsive y capítulos 1–3 | La captura aparece en Today y el texto libre cae al Inbox | ⬜ |
 | D3 Hábitos + check-in + History | Capítulos 4, 7 y 8 | Check-in de 4 pendientes a puro tap y la regla de 3 se ve | ⬜ |
 | D4 Orbit + Direction | Capítulos 5 y 6, Orbit con alternativa en lista y el árbol de Direction | La negociación se reproduce completa | ⬜ |
@@ -80,19 +80,23 @@ Estados: ⬜ sin empezar · ⏳ en curso · ✅ hecha
 
 Todo en `src/demo/`, TS puro: `step(state, action, now)` nunca muta su entrada ni lee el reloj. Antes de aplicar cualquier acción, procesa los eventos que ya vencieron, igual que el tick del bot. Los textos viven en `src/copy/es.ts`, copiados de `render/es.py` y de las specs F2–F7 del bot.
 
-- [ ] **Tiempo** (`time.ts`): minutos desde el lun 12 oct 2026 00:00, hora local. Fechas cortas ("jue 15 oct"), horas y duraciones.
-- [ ] **Fixture** (`fixture.ts`): la semana de un estudiante de ingeniería. Lleva clases recurrentes, bloques planeados, pendientes (uno ya recorrido 3 veces), 2 hábitos con ventanas, objetivos y proyectos, y un recordatorio el viernes.
-- [ ] **Huecos y carga** (`slots.ts`, versión simple de F5): huecos libres, carga por día, colocación en chunks, candidatos con movimientos y advertencia de sobrecarga.
-- [ ] **Planes** (`plan.ts`, F7): el formato Polaris se parsea con regex, sin LLM, y se reparte con tope por día y fecha límite.
-- [ ] **Motor** (`engine.ts` y sus flows):
+- [x] **Tiempo** (`time.ts`): minutos desde el lun 12 oct 2026 00:00, hora local. Fechas cortas ("jue 15 oct"), horas y duraciones.
+- [x] **Fixture** (`fixture.ts`): la semana de un estudiante de ingeniería. Lleva clases recurrentes, bloques planeados, pendientes (uno ya recorrido 3 veces), 2 hábitos con ventanas, objetivos y proyectos, y un recordatorio el viernes.
+- [x] **Huecos y carga** (`slots.ts`, versión simple de F5): huecos libres, carga por día, colocación en chunks, candidatos con movimientos y advertencia de sobrecarga.
+- [x] **Planes** (`plan.ts`, F7): el formato Polaris se parsea con regex, sin LLM, y se reparte con tope por día y fecha límite.
+- [x] **Motor** (`engine.ts` y sus flows):
   - Captura con ack que se edita en su lugar; el texto libre va al inbox.
   - Consultas y `/hoy`, `/inbox`, `/volcado`, `/listo`.
   - Brief, hábitos de lazo cerrado y recordatorios.
   - Check-in con regla de 3, negociación y plan.
   - Caída con un solo catch-up, y salto de días.
-- [ ] **Guion** (`script.ts`): los 8 capítulos con sus sugerencias (chips con su JSON) y los pasos canónicos. `replayTo(n)` reconstruye el estado de cualquier capítulo.
-- [ ] **Reloj** (`clock.ts`): siguiente momento, capítulo actual y avance simulado.
-- [ ] **Pruebas:** una por capítulo y la conversación dorada de la negociación. Además, el día completo de punta a punta sin guiones largos en el chat.
+- [x] **Guion** (`script.ts`): los 8 capítulos con sus sugerencias (chips con su JSON) y los pasos canónicos. `replayTo(n)` reconstruye el estado de cualquier capítulo.
+- [x] **Reloj** (`clock.ts`): siguiente momento, capítulo actual y avance simulado.
+- [x] **Pruebas:** una por capítulo y la conversación dorada de la negociación. Además, el día completo de punta a punta sin guiones largos en el chat. Son 77 en total.
+
+**Lo que dejó D1 para D2:**
+- **Salto al viernes:** es un recurso de la demo (`skipDays`), no del bot. El chat lo avisa con un mensaje del sistema, para que no parezca que Polaris se quedó callado.
+- **Texto libre:** sin parser solo se lee lo que el código puede leer solo. Es el tiempo con número ("4 horas") y un "va" o un "no" en una negociación o un plan abierto. Todo lo demás cae al inbox, tal cual.
 
 ## Decisiones abiertas (con default)
 
