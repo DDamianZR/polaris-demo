@@ -50,7 +50,7 @@ Controles: reproducir/pausa, siguiente momento y saltar a un capítulo. Con redu
 
 Medidos con WCAG sobre Midnight `#070A14`:
 
-1. **Muted** `#697386` da 4.1:1 y no pasa AA. Para texto se usa `#7D879B` (5.5:1, y 4.8:1 sobre Surface). El `#697386` queda para bordes y elementos deshabilitados.
+1. **Muted** `#697386` da 4.1:1 y no pasa AA. Para texto se usa `#808A9E`: 5.7:1 sobre Midnight y 4.7:1 sobre Elevated. El plan proponía `#7D879B`, pero la prueba de contraste mostró que sobre Elevated da 4.49:1. El `#697386` queda para bordes y elementos deshabilitados. Todo esto lo verifica `src/design/contrast.test.ts`.
 2. **Violet** `#7C3AED` da 3.5:1. Sirve en el gradiente, en gráficos y en texto de 18 px o más, nunca en texto chico.
 3. **Blanco sobre Electric Blue** da 3.4:1. Los botones rellenos llevan texto Midnight (5.4:1), o el azul va solo como contorno o foco.
 
@@ -70,9 +70,9 @@ Estados: ⬜ sin empezar · ⏳ en curso · ✅ hecha
 ### D0 Cimientos
 
 - [x] `docs/ux.md` y `PLAN.md` de la demo.
-- [ ] Scaffold con Vite + React 19 + TS, Tailwind v4, Biome, Vitest y script `check`.
-- [ ] Tokens de `docs/ux.md` en `@theme`, con los ajustes de contraste y una prueba que mide el contraste de cada par texto/fondo.
-- [ ] Inter self-hosted y Phosphor.
+- [x] Scaffold con Vite + React 19 + TS, Tailwind v4, Biome, Vitest y script `check`. Las versiones van fijas y tienen al menos ~2 semanas de publicadas.
+- [x] Tokens de `docs/ux.md` en `@theme`, con los ajustes de contraste y una prueba que mide el contraste de cada par texto/fondo.
+- [x] Inter self-hosted y Phosphor.
 - [ ] Isotipo en SVG y loader (el anillo gira, la estrella queda fija; estático con reduced motion).
 - [ ] Página de revisión con el SVG junto al `.webp` y su aprobación.
 
