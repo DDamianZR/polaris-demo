@@ -1,6 +1,6 @@
 # Polaris · demo web — Plan
 
-**Estado:** D0 ✅ · D1 ✅ · D2 ✅ · D3 en curso · **Actualizado:** 2026-10-08 · **Aprobado:** 2026-10-07
+**Estado:** D0 ✅ · D1 ✅ · D2 ✅ · D3 ✅ · D4 en curso · **Actualizado:** 2026-10-08 · **Aprobado:** 2026-10-07
 
 ## Objetivo
 
@@ -61,8 +61,8 @@ Medidos con WCAG sobre Midnight `#070A14`:
 | D0 Cimientos | Docs, scaffold, tokens, Inter, Phosphor, Biome, Vitest, isotipo SVG y loader | `npm run check` en verde. El SVG se aprueba lado a lado con el `.webp` | ✅ |
 | D1 Motor | fixture, engine, script y reloj, con pruebas por capítulo | `npm test` en verde, todavía sin UI | ✅ |
 | D2 Today + Inbox + chat | Estructura responsive y capítulos 1–3 | La captura aparece en Today y el texto libre cae al Inbox | ✅ |
-| D3 Hábitos + check-in + History | Capítulos 4, 7 y 8 | Check-in de 4 pendientes a puro tap y la regla de 3 se ve | ⏳ |
-| D4 Orbit + Direction | Capítulos 5 y 6, Orbit con alternativa en lista y el árbol de Direction | La negociación se reproduce completa | ⬜ |
+| D3 Hábitos + check-in + History | Capítulos 4, 7 y 8 | Check-in de 4 pendientes a puro tap y la regla de 3 se ve | ✅ |
+| D4 Orbit + Direction | Capítulos 5 y 6, Orbit con alternativa en lista y el árbol de Direction | La negociación se reproduce completa | ⏳ |
 | D5 Landing + pulido | Secciones de la landing, Ctrl+K, a11y, checklist de diseño y Lighthouse | Se ve bien a 375, 768 y 1280 px. Lighthouse ≥ 90 en a11y y rendimiento. Cero guiones largos visibles | ⬜ |
 
 Estados: ⬜ sin empezar · ⏳ en curso · ✅ hecha
@@ -118,6 +118,18 @@ Aceptada el 2026-10-08 con el rediseño Sinapsis (`docs/diseno.md`): mapa de ide
 **Notas de D3:**
 - El check-in de 4 pendientes se resuelve con 5 toques (reagendar pide la fecha). La regla de 3 se ve en la tarjeta, en negritas, y sin el botón Recorrer.
 - Lo hecho "mientras tanto" en el salto al viernes queda registrado en su día (miércoles y jueves), no en el momento del salto.
+
+### D4 Orbit + Direction
+
+- [ ] **Orbit** ("¿Qué está alrededor de tu atención?"):
+  - Anillos incompletos, como el isotipo, con tú en el centro. Lo urgente va cerca y lo que puede esperar, en las orillas.
+  - Sectores por área.
+  - Los nodos se reacomodan con movimiento cuando algo cambia de fecha.
+  - Alternativa "Ver como lista"; en el cel solo hay lista.
+- [ ] **Tu semana** en Orbit: los minutos de foco planeados por día contra el tope, y el día que se pasa, marcado. Es donde se ve la advertencia de la negociación.
+- [ ] **Direction:** Objetivo → Proyecto → Próxima acción, con indicadores humanos ("Vas avanzando", "Esto es lo siguiente", "Lo terminas el…") y sin porcentajes. Los planes aterrizados (F7) aparecen aquí.
+- [ ] **Navegación:** Orbit y Direction entran a las pestañas. En el cel van en "Más", para no pasar de 5. La negociación abre Orbit y el plan abre Direction.
+- [ ] **Pruebas** de los selectores y de la geometría de Orbit.
 
 ## Decisiones abiertas (con default)
 
