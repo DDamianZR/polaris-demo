@@ -1,4 +1,4 @@
-# Polaris · demo web — Plan
+# Plan de la demo web de Polaris
 
 **Estado:** D0 ✅ · D1 ✅ · D2 ✅ · D3 ✅ · D4 en curso · **Actualizado:** 2026-10-08 · **Aprobado:** 2026-10-07
 
