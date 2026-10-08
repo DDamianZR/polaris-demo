@@ -3,6 +3,7 @@ import { CHECKIN_EMPTY, DUMP_NONE, NEG_DECLINED, NEG_HOW_LONG, OTHER_SHORT } fro
 import { type Action, step } from "./engine";
 import { fixtureState } from "./fixture";
 import { PLAN_TEXT } from "./script";
+import { recentCaptures } from "./selectors";
 import type { DemoState } from "./state";
 import { at, JUE, MAR, MIE, type Minute, VIE } from "./time";
 import type { Message, Parsed, Press } from "./types";
@@ -116,6 +117,21 @@ describe("captura (F1)", () => {
     const msg = s.messages.find((m) => m.text === "⏰ Llevar el cargador");
     expect(msg?.at).toBe(at(MIE, "08:00"));
     expect(msg && labels(msg)).toEqual(["✅ Listo", "⏰ 30 min"]);
+  });
+
+  it("«+ Capturar» de la UI guarda sin pasar por el chat y recuerda lo que escribiste", () => {
+    const before = run(fixtureState(), [at(MAR, "07:20"), tick]);
+    const s = run(
+      before,
+      [at(MAR, "07:20"), { type: "capture", text: sentence, parsed }],
+      [at(MAR, "07:21"), { type: "capture", text: "  cotizar audífonos  " }],
+    );
+    expect(s.messages).toHaveLength(before.messages.length);
+    const groups = recentCaptures(s);
+    expect(groups.map((g) => [g.source, g.items.map((i) => i.title)])).toEqual([
+      ["cotizar audífonos", ["cotizar audífonos"]],
+      [sentence, ["Entregar Sistemas", "Comprar cables para la práctica"]],
+    ]);
   });
 
   it("consultas y cambios por pista", () => {

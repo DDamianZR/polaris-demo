@@ -250,6 +250,112 @@ export function skipSummary(day: number, doneCount: number, habitsDone: number, 
   return `Saltamos al ${shortDate(day)}. Mientras tanto cerraste ${doneCount} pendientes y ${habitsDone} de ${habits} hábitos.`;
 }
 
+// --- UI de Polaris y de la demo (docs/ux.md: humano, corto, tranquilo) ---
+
+const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+
+/** "Hoy", "Mañana", "Jueves", o la fecha corta si está lejos. */
+export function relativeDay(day: number, today: number): string {
+  if (day === today) return "Hoy";
+  if (day === today + 1) return "Mañana";
+  if (day === today - 1) return "Ayer";
+  if (day > today && day - today < 7) return capitalize(DAY_LONG[weekday(day)] ?? "");
+  return shortDate(day);
+}
+
+/** "mar 13 oct, 07:35" para el reloj de la demo. */
+export const clockLabel = (t: Minute) => `${shortDate(Math.floor(t / 1440))}, ${hhmm(t)}`;
+
+export const UI = {
+  demoLabel: "Demo interactiva con datos de ejemplo",
+  chat: {
+    title: "Polaris",
+    caption: "Así se ve en tu Telegram",
+    placeholder: "Escribe un mensaje",
+    send: "Enviar",
+    edited: "editado",
+    log: "Conversación con Polaris",
+    suggestions: "Prueba con",
+  },
+  controls: {
+    next: "Siguiente momento",
+    play: "Reproducir el día",
+    pause: "Pausar",
+    chapters: "Capítulos",
+    goTo: (n: number, title: string) => `Ir al capítulo ${n}: ${title}`,
+    position: (n: number, total: number) => `${n}/${total}`,
+    skipDays: "Saltar al viernes",
+    outage: "Apagar Polaris 5 horas",
+  },
+  nav: {
+    label: "Secciones de Polaris",
+    chat: "Chat",
+    today: "Today",
+    inbox: "Inbox",
+    orbit: "Orbit",
+    direction: "Direction",
+    history: "History",
+  },
+  today: {
+    onTrack: "Tu día está bajo control.",
+    calm: "No tienes nada urgente.",
+    now: "Ahora",
+    after: "Después",
+    inProgress: (left: string) => `En curso · ${left}`,
+    freeUntil: (time: string) => `Libre hasta las ${time}.`,
+    freeRest: "Nada más por hoy.",
+    pending: "Para hoy",
+    upcoming: "Lo que viene",
+    summary: (pending: number, habits: number, events: number) =>
+      [
+        plural(pending, "pendiente", "pendientes"),
+        plural(habits, "hábito", "hábitos"),
+        plural(events, "evento", "eventos"),
+      ].join(" · "),
+  },
+  inbox: {
+    title: "¿Qué tienes en la cabeza?",
+    concept: "Lo que ya no necesitas recordar.",
+    placeholder: "Escribe lo que sea…",
+    capture: "Capturar",
+    recent: "Recién capturado",
+    undated: "Sin fecha",
+    raw: "Lo tenemos. Lo ordenamos después.",
+    empty: "Todo despejado.",
+  },
+  chapters: {
+    brief: { title: "Lo que importa", lead: "A las 7 llega tu día en un vistazo. Sin abrir nada." },
+    capture: {
+      title: "Dilo como te salga",
+      lead: "Escríbelo como se lo dirías a alguien. Polaris le pone fecha y lugar.",
+    },
+    dump: {
+      title: "Vacía la cabeza",
+      lead: "Suelta todo de jalón. Al final te lo regresa en orden.",
+    },
+    habit: {
+      title: "Lo básico, sin culpa",
+      lead: "Te recuerda, te pregunta y, si no se pudo, lo pasa a la siguiente ventana.",
+    },
+    negotiation: {
+      title: "Pídele espacio",
+      lead: "Te propone con números, te avisa una vez si te cargas de más y tú decides.",
+    },
+    plan: {
+      title: "Aterriza tus planes",
+      lead: "Pega un plan por pasos y te dice si cabe en tus semanas.",
+    },
+    checkin: {
+      title: "Una decisión, no culpa",
+      lead: "Cada noche, lo que no se hizo recibe una decisión en un tap.",
+    },
+    friday: {
+      title: "Nada se pierde",
+      lead: "Aunque Polaris se apague, al volver te dice qué se pasó.",
+    },
+  },
+} as const;
+
 // --- Botones ---
 
 export const BTN = {

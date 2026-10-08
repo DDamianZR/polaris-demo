@@ -39,7 +39,12 @@ import { onPlan, onPlanConfirm } from "./planning";
 const GREETINGS = new Set(["hola", "holi", "buenas", "gracias", "ok", "oki", "sale", "jaja", "👍"]);
 const INBOX_MAX = 15;
 
-export function createItem(s: DemoState, p: ParsedItem, now: Minute): Item {
+export function createItem(
+  s: DemoState,
+  p: ParsedItem,
+  now: Minute,
+  source: string | null = null,
+): Item {
   const dueDay = p.due_date ? dayFromIso(p.due_date) : null;
   const dueAt = dueDay !== null && p.due_time ? at(dueDay, p.due_time) : null;
   // Como `validate` del bot: un recordatorio sin hora es una tarea.
@@ -59,6 +64,7 @@ export function createItem(s: DemoState, p: ParsedItem, now: Minute): Item {
     createdAt: now,
     doneAt: null,
     captured: true,
+    source,
   };
   s.items.push(item);
   if (dueAt !== null) {
@@ -88,7 +94,25 @@ function rawItem(s: DemoState, text: string, now: Minute): Item {
       estimate_min: null,
     },
     now,
+    text,
   );
+}
+
+/** Lo que trae un mensaje: los items del parser o, sin parser, el texto tal cual. */
+function captureAll(s: DemoState, text: string, parsed: Parsed | undefined, now: Minute): Item[] {
+  return parsed?.intent === "capture" && parsed.items?.length
+    ? parsed.items.map((p) => createItem(s, p, now, text))
+    : [rawItem(s, text, now)];
+}
+
+/** "+ Capturar" de la UI: guarda sin pasar por el chat. Primero captura, después organizamos. */
+export function captureSilently(
+  s: DemoState,
+  text: string,
+  parsed: Parsed | undefined,
+  now: Minute,
+) {
+  if (text.trim()) captureAll(s, text.trim(), parsed, now);
 }
 
 export function briefFor(s: DemoState, day: number, greeting: boolean): string {
@@ -200,10 +224,7 @@ export function handleSend(s: DemoState, text: string, parsed: Parsed | undefine
   }
   if (s.flows.dump) {
     // En volcado no se contesta: se guarda y se pone 👍.
-    const created =
-      parsed?.intent === "capture" && parsed.items?.length
-        ? parsed.items.map((p) => createItem(s, p, now))
-        : [rawItem(s, trimmed, now)];
+    const created = captureAll(s, trimmed, parsed, now);
     s.flows.dump.itemIds.push(...created.map((i) => i.id));
     userMessage.reaction = "👍";
     return;
@@ -211,7 +232,7 @@ export function handleSend(s: DemoState, text: string, parsed: Parsed | undefine
 
   const intent = parsed?.intent;
   if (intent === "capture" && parsed?.items?.length) {
-    const created = parsed.items.map((p) => createItem(s, p, now));
+    const created = captureAll(s, trimmed, parsed, now);
     const ack = addMessage(s, "polaris", now, captureAck(created));
     ack.editedFrom = ACK;
   } else if (intent === "query" && parsed?.query) {

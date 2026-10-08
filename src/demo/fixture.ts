@@ -71,6 +71,7 @@ function item(partial: Partial<Item> & Pick<Item, "id" | "title" | "createdAt">)
     projectId: null,
     doneAt: null,
     captured: true,
+    source: null,
     ...partial,
   };
 }

@@ -24,6 +24,8 @@ export type Item = {
   doneAt: Minute | null;
   /** Salió de un mensaje esta semana: cuenta para "de lo que dijiste, ¿cuánto sigue?". */
   captured: boolean;
+  /** Lo que escribiste tal cual, para enseñar en el Inbox cómo se ordenó. */
+  source: string | null;
 };
 
 /** Horario fijo recurrente (clases, entrenamiento): eventos que ocurren. */

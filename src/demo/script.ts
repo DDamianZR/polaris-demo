@@ -10,8 +10,10 @@ import type { SkipOutcomes } from "./tick";
 import { at, isoDate, JUE, MAR, MIE, type Minute, VIE } from "./time";
 import type { Parsed, Press } from "./types";
 
-export type Suggestion = { text: string; parsed?: Parsed };
-export type ScriptStep = { at: Minute; action: Action };
+/** `label` es lo que muestra el chip cuando el texto es largo (el plan). */
+export type Suggestion = { text: string; label?: string; parsed?: Parsed };
+/** `auto`: lo hace la demo (saltar días, apagar Polaris), no el visitante. */
+export type ScriptStep = { at: Minute; action: Action; auto?: true };
 export type ChapterKey =
   | "brief"
   | "capture"
@@ -220,7 +222,7 @@ export const CHAPTERS: Chapter[] = [
   {
     key: "plan",
     start: at(MAR, "16:55"),
-    suggestions: [{ text: PLAN_TEXT }],
+    suggestions: [{ text: PLAN_TEXT, label: "Pegar un plan para aprender FastAPI" }],
     steps: [
       send(at(MAR, "17:00"), PLAN_TEXT),
       press(at(MAR, "17:01"), { kind: "plan", choice: "confirm" }),
@@ -249,8 +251,9 @@ export const CHAPTERS: Chapter[] = [
       {
         at: at(MAR, "22:30"),
         action: { type: "skipDays", until: at(VIE, "09:12"), outcomes: MIDWEEK },
+        auto: true,
       },
-      { at: at(VIE, "09:12"), action: { type: "outage", until: at(VIE, "14:40") } },
+      { at: at(VIE, "09:12"), action: { type: "outage", until: at(VIE, "14:40") }, auto: true },
       press(at(VIE, "14:42"), { kind: "reminder", itemId: "i12", choice: "done" }),
     ],
   },

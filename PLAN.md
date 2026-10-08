@@ -1,6 +1,6 @@
 # Polaris · demo web — Plan
 
-**Estado:** D0 ✅ · D1 ✅ · D2 sigue · **Actualizado:** 2026-10-07 · **Aprobado:** 2026-10-07
+**Estado:** D0 ✅ · D1 ✅ · D2 en curso (estructura, chat, Today e Inbox listos; falta revisar el Inbox en el navegador, el cel y la aprobación) · **Actualizado:** 2026-10-07 · **Aprobado:** 2026-10-07
 
 ## Objetivo
 
@@ -60,7 +60,7 @@ Medidos con WCAG sobre Midnight `#070A14`:
 |---|---|---|---|
 | D0 Cimientos | Docs, scaffold, tokens, Inter, Phosphor, Biome, Vitest, isotipo SVG y loader | `npm run check` en verde. El SVG se aprueba lado a lado con el `.webp` | ✅ |
 | D1 Motor | fixture, engine, script y reloj, con pruebas por capítulo | `npm test` en verde, todavía sin UI | ✅ |
-| D2 Today + Inbox + chat | Estructura responsive y capítulos 1–3 | La captura aparece en Today y el texto libre cae al Inbox | ⬜ |
+| D2 Today + Inbox + chat | Estructura responsive y capítulos 1–3 | La captura aparece en Today y el texto libre cae al Inbox | ⏳ |
 | D3 Hábitos + check-in + History | Capítulos 4, 7 y 8 | Check-in de 4 pendientes a puro tap y la regla de 3 se ve | ⬜ |
 | D4 Orbit + Direction | Capítulos 5 y 6, Orbit con alternativa en lista y el árbol de Direction | La negociación se reproduce completa | ⬜ |
 | D5 Landing + pulido | Secciones de la landing, Ctrl+K, a11y, checklist de diseño y Lighthouse | Se ve bien a 375, 768 y 1280 px. Lighthouse ≥ 90 en a11y y rendimiento. Cero guiones largos visibles | ⬜ |

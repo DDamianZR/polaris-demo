@@ -71,6 +71,7 @@ export function onPlanConfirm(s: DemoState, now: Minute): boolean {
       createdAt: now,
       doneAt: null,
       captured: false,
+      source: null,
     });
     return id;
   });

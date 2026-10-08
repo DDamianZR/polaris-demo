@@ -44,23 +44,59 @@ export function greeting(now: Minute): string {
   return "Buenas noches.";
 }
 
-/** Today: ¿qué está pasando ahora? Ahora, después y un resumen de una línea. */
+const byDue = (a: Item, b: Item) =>
+  (a.dueDay ?? 0) - (b.dueDay ?? 0) || (a.dueAt ?? 0) - (b.dueAt ?? 0) || a.createdAt - b.createdAt;
+
+/** Today: ¿qué está pasando ahora? Ahora, después, lo de hoy y lo que viene. */
 export function todayView(s: DemoState, now: Minute) {
   const day = dayOf(now);
   const agenda = agendaOf(s, day);
+  const live = s.items.filter((i) => i.status === "active" && i.kind !== "idea");
+  const pendingToday = live.filter((i) => i.dueDay !== null && i.dueDay <= day).sort(byDue);
   return {
     day,
     greeting: greeting(now),
     current: agenda.find((a) => a.start <= now && now < a.end) ?? null,
     next: agenda.filter((a) => a.start > now).slice(0, 3),
+    pendingToday,
+    upcoming: live
+      .filter((i) => i.dueDay !== null && i.dueDay > day && i.dueDay <= day + 3)
+      .sort(byDue),
     counts: {
-      pending: s.items.filter(
-        (i) => i.status === "active" && i.kind !== "idea" && i.dueDay !== null && i.dueDay <= day,
-      ).length,
+      pending: pendingToday.length,
       habits: s.habitDays.filter((h) => h.day === day && h.status === "pending").length,
       events: agenda.filter((a) => a.kind === "event" && a.end > now).length,
     },
   };
+}
+
+/** `raw`: sin parser, quedó tal cual en el inbox ("lo ordenamos después"). */
+export type CaptureGroup = { source: string; at: Minute; items: Item[]; raw: boolean };
+
+/** Lo último que escribiste y en qué se convirtió, agrupado por mensaje. */
+export function recentCaptures(s: DemoState, limit = 4): CaptureGroup[] {
+  const groups = new Map<string, CaptureGroup>();
+  for (const item of s.items) {
+    if (!item.source) continue;
+    const key = `${item.createdAt}|${item.source}`;
+    const group = groups.get(key) ?? {
+      source: item.source,
+      at: item.createdAt,
+      items: [],
+      raw: false,
+    };
+    group.items.push(item);
+    groups.set(key, group);
+  }
+  for (const group of groups.values()) {
+    const [only] = group.items;
+    group.raw =
+      group.items.length === 1 &&
+      only?.status === "inbox" &&
+      only.kind === "task" &&
+      only.area === null;
+  }
+  return [...groups.values()].sort((a, b) => b.at - a.at).slice(0, limit);
 }
 
 export function inboxItems(s: DemoState): Item[] {

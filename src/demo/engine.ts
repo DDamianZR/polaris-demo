@@ -3,7 +3,7 @@
  * Puro: nunca muta su entrada ni lee el reloj. Antes de cada acción procesa lo que ya venció,
  * igual que el tick del bot. El LLM no existe aquí: la salida del parser llega en `parsed`.
  */
-import { handleSend } from "./flows/capture";
+import { captureSilently, handleSend } from "./flows/capture";
 import { pressCheckin, pressCheckinFollowup } from "./flows/checkin";
 import { pressHabit } from "./flows/habits";
 import { onConfirm, onDecline } from "./flows/negotiation";
@@ -17,6 +17,8 @@ import type { Message, Parsed, Press } from "./types";
 export type Action =
   | { type: "tick" }
   | { type: "send"; text: string; parsed?: Parsed }
+  /** "+ Capturar" de la UI web: guarda sin pasar por el chat. */
+  | { type: "capture"; text: string; parsed?: Parsed }
   | { type: "press"; press: Press; messageId?: string }
   | { type: "outage"; until: Minute }
   | { type: "skipDays"; until: Minute; outcomes: SkipOutcomes };
@@ -71,6 +73,9 @@ export function step(state: DemoState, action: Action, now: Minute): DemoState {
       break;
     case "send":
       handleSend(s, action.text, action.parsed, t);
+      break;
+    case "capture":
+      captureSilently(s, action.text, action.parsed, t);
       break;
     case "press":
       handlePress(s, action.press, action.messageId, t);

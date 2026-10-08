@@ -91,6 +91,11 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-line) transparent;
+  }
+
   :focus-visible {
     outline: 2px solid var(--color-blue);
     outline-offset: 2px;
