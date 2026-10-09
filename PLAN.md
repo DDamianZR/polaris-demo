@@ -1,6 +1,6 @@
 # Plan de la demo web de Polaris
 
-**Estado:** D0 ✅ · D1 ✅ · D2 ✅ · D3 ✅ · D4 ✅ · D5 en curso · **Actualizado:** 2026-10-08 · **Aprobado:** 2026-10-07
+**Estado:** D0 ✅ · D1 ✅ · D2 ✅ · D3 ✅ · D4 ✅ · D5 ✅ · **Actualizado:** 2026-10-09 · **Aprobado:** 2026-10-07
 
 ## Objetivo
 
@@ -63,7 +63,7 @@ Medidos con WCAG sobre Midnight `#070A14`:
 | D2 Today + Inbox + chat | Estructura responsive y capítulos 1–3 | La captura aparece en Today y el texto libre cae al Inbox | ✅ |
 | D3 Hábitos + check-in + History | Capítulos 4, 7 y 8 | Check-in de 4 pendientes a puro tap y la regla de 3 se ve | ✅ |
 | D4 Orbit + Direction | Capítulos 5 y 6, Orbit con alternativa en lista y el árbol de Direction | La negociación se reproduce completa | ✅ |
-| D5 Landing + pulido | Secciones de la landing, Ctrl+K, a11y, checklist de diseño y Lighthouse | Se ve bien a 375, 768 y 1280 px. Lighthouse ≥ 90 en a11y y rendimiento. Cero guiones largos visibles | ⏳ |
+| D5 Landing + pulido | Secciones de la landing, Ctrl+K, a11y, checklist de diseño y Lighthouse | Se ve bien a 375, 768 y 1280 px. Lighthouse ≥ 90 en a11y y rendimiento. Cero guiones largos visibles | ✅ |
 
 Estados: ⬜ sin empezar · ⏳ en curso · ✅ hecha
 
@@ -157,8 +157,6 @@ Una sola página: la demo es la sección 4 y ocupa la pantalla completa. Todo lo
   - Se revisa a 375, 768 y 1280 px.
   - Lighthouse de 90 o más en accesibilidad y rendimiento.
   - Una prueba garantiza cero guiones largos en el texto visible.
-- [ ] **Puntaje oficial de rendimiento** con Lighthouse completo (CLI o DevTools). La herramienta que se usó mide todo menos rendimiento.
-
 **Notas de D5:**
 - Lighthouse sobre el build de producción, en local: accesibilidad 100, buenas prácticas 100 y SEO 100, en cel y en escritorio.
 - Rendimiento medido con una traza en condiciones de cel (CPU 4x y Slow 4G): FCP y LCP de 1.9 s, TBT de unos 60 ms y CLS de 0. Con las curvas de Lighthouse eso da alrededor de 95, pero es una estimación.
@@ -174,5 +172,6 @@ Una sola página: la demo es la sección 4 y ocupa la pantalla completa. Todo lo
 
 ## Backlog
 
+- Puntaje oficial de rendimiento con Lighthouse completo (CLI o DevTools). En D5 se midió con una traza: ver las notas de D5.
 - Versión en inglés.
 - Settings (horarios del brief y del check-in, áreas).
