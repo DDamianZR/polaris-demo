@@ -1,8 +1,9 @@
-import { ArrowUp } from "@phosphor-icons/react";
+import { ArrowUp, CaretLeft, CaretRight } from "@phosphor-icons/react";
 import { motion, useReducedMotion } from "motion/react";
 import { type FormEvent, Fragment, type KeyboardEvent, useEffect, useRef, useState } from "react";
 import { useDemo } from "../app/DemoContext";
 import { nextTime, visibleSuggestions } from "../app/session";
+import { edgeMask, useScrollEdges } from "../app/useScrollEdges";
 import { Isotipo } from "../brand/Isotipo";
 import { UI } from "../copy/es";
 import { dayOf, hhmm, shortDate } from "../demo/time";
@@ -15,6 +16,7 @@ export function ChatPanel({ className = "" }: { className?: string }) {
   const reduce = useReducedMotion();
   const { messages } = session.demo;
   const suggestions = visibleSuggestions(session);
+  const lane = useScrollEdges<HTMLDivElement>();
   const [draft, setDraft] = useState("");
   const logRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -111,12 +113,39 @@ export function ChatPanel({ className = "" }: { className?: string }) {
       <div className="punteado-t flex shrink-0 flex-col gap-3 px-5 pt-4 pb-5">
         {suggestions.length > 0 ? (
           <div className="flex flex-col gap-2">
-            <p className="etiqueta text-niebla">{UI.chat.suggestions}</p>
-            <div className="-mx-5 flex gap-2 overflow-x-auto px-5 [mask-image:linear-gradient(to_right,black_85%,transparent)] [scrollbar-width:none]">
+            <div className="flex min-h-8 items-center justify-between gap-3">
+              <p className="etiqueta text-niebla">{UI.chat.suggestions}</p>
+              {/* Si no caben todas, se dice: un botón las recorre (también con teclado). */}
+              {lane.edges.overflows ? (
+                <button
+                  type="button"
+                  onClick={() =>
+                    lane.el?.scrollBy({
+                      left: lane.edges.atEnd ? -lane.el.scrollWidth : lane.el.clientWidth * 0.8,
+                      behavior: reduce ? "auto" : "smooth",
+                    })
+                  }
+                  aria-label={lane.edges.atEnd ? UI.chat.firstSuggestions : UI.chat.moreSuggestions}
+                  title={lane.edges.atEnd ? UI.chat.firstSuggestions : UI.chat.moreSuggestions}
+                  className="grid size-8 place-items-center rounded-full border border-trazo text-ceniza transition-colors duration-150 hover:border-crema hover:text-crema"
+                >
+                  {lane.edges.atEnd ? (
+                    <CaretLeft size={14} weight="regular" aria-hidden="true" />
+                  ) : (
+                    <CaretRight size={14} weight="regular" aria-hidden="true" />
+                  )}
+                </button>
+              ) : null}
+            </div>
+            <div
+              ref={lane.ref}
+              className={`-mx-5 flex gap-2 overflow-x-auto px-5 [scrollbar-width:none] ${edgeMask(lane.edges)}`}
+            >
               {suggestions.map((sg) => (
                 <button
                   key={sg.text}
                   type="button"
+                  title={sg.text}
                   onClick={() => send(sg.text, sg.parsed)}
                   className="min-h-11 max-w-[280px] shrink-0 truncate rounded-full border border-trazo px-4 text-left text-chico text-ceniza transition-[border-color,color,transform] duration-150 ease-out hover:border-crema hover:text-crema active:scale-[0.99]"
                 >

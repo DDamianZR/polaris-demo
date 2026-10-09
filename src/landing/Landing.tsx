@@ -60,6 +60,8 @@ export function Landing() {
                 {demo.title}
               </h2>
               <p className="mt-6 max-w-[52ch] text-entrada font-light text-ceniza">{demo.lead}</p>
+              {/* En el cel la nav no muestra la etiqueta de datos de ejemplo: va aquí. */}
+              <p className="etiqueta mt-5 text-niebla md:hidden">{UI.demoLabel}</p>
             </div>
             <div
               id={DEMO_ID}

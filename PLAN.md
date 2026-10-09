@@ -148,7 +148,7 @@ Una sola página: la demo es la sección 4 y ocupa la pantalla completa. Todo lo
   - Lo que Polaris te promete, como lista asimétrica.
   - Cierre: "Todo en orden.", "Pruébalo", "Vuelve a empezar el día" y el pie.
 - [x] **Ctrl+K:** una paleta de comandos sobre la demo, con capítulos, vistas y pendientes.
-- [ ] **Pulido de lo visto en D4:**
+- [x] **Pulido de lo visto en D4:**
   - El conteo del cerebro cabe en una línea a 1280 px.
   - Las sugerencias del chat avisan que hay más.
   - En el cel, la vista gana espacio.

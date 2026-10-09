@@ -290,6 +290,8 @@ export const UI = {
     you: "Tú",
     channel: "En tu Telegram",
     suggestions: "Prueba con",
+    moreSuggestions: "Ver más sugerencias",
+    firstSuggestions: "Volver a la primera sugerencia",
   },
   controls: {
     goAt: (time: string) => `Ir a las ${time}`,

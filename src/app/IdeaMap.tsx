@@ -27,7 +27,7 @@ export function IdeaMap({ variant, withStats = false, className = "" }: Props) {
         />
       </div>
       <figcaption
-        className={withStats ? "etiqueta flex flex-wrap gap-x-5 gap-y-1 text-niebla" : "sr-only"}
+        className={withStats ? "etiqueta flex flex-wrap gap-x-3 gap-y-1 text-niebla" : "sr-only"}
       >
         <span className="sr-only">
           {UI.brain.describe(counts.ideas, counts.conectadas, counts.sueltas)}

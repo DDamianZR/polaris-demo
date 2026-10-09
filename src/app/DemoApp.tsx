@@ -215,11 +215,9 @@ export function DemoSection() {
   } else {
     body = (
       <div className="flex h-full flex-col overflow-hidden">
-        <header className="flex h-12 shrink-0 items-center justify-between px-4">
-          <Brand />
-          <p className="etiqueta text-niebla">{UI.demoLabel}</p>
-        </header>
-        <section className="relative flex h-[118px] shrink-0 items-center px-4">
+        {/* En el cel la página ya trae la marca arriba: la demo arranca con el reloj, para que
+            la vista tenga más espacio. */}
+        <div className="relative flex h-[100px] shrink-0 items-center px-4">
           <IdeaMap
             variant="compact"
             className="pointer-events-none absolute inset-y-0 right-0 w-[56%]"
@@ -227,7 +225,7 @@ export function DemoSection() {
           <div className="relative">
             <DayClock now={session.now} size="xs" />
           </div>
-        </section>
+        </div>
         <ChapterBar size="compact" className="punteado-t px-4 py-3" />
         <Itinerary orientation="horizontal" className="punteado-t punteado-b px-4" />
         <div className="flex min-h-0 flex-1">

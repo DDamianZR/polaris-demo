@@ -1,5 +1,5 @@
 import { MagnifyingGlass, Plus } from "@phosphor-icons/react";
-import { useEffect, useRef, useState } from "react";
+import { edgeMask, useScrollEdges } from "../app/useScrollEdges";
 import { UI } from "../copy/es";
 import { DirectionView } from "./DirectionView";
 import { HistoryView } from "./HistoryView";
@@ -25,22 +25,6 @@ type Props = {
   className?: string;
 };
 
-/** Si el contenido de un carril horizontal no cabe; solo entonces se desvanece la orilla. */
-function useOverflows<T extends HTMLElement>() {
-  const ref = useRef<T>(null);
-  const [overflows, setOverflows] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const measure = () => setOverflows(el.scrollWidth > el.clientWidth + 1);
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-  return [ref, overflows] as const;
-}
-
 /** Polaris: entender, revisar, reorganizar y decidir. Pestañas arriba y la vista debajo. */
 export function PolarisPanel({
   view,
@@ -52,18 +36,16 @@ export function PolarisPanel({
   showTabs,
   className = "",
 }: Props) {
-  const [tabsRef, tabsOverflow] = useOverflows<HTMLElement>();
+  const tabs = useScrollEdges<HTMLElement>();
   return (
     <section aria-label={UI.chat.title} className={`flex min-h-0 min-w-0 flex-col ${className}`}>
       {showTabs ? (
         <header className="punteado-b flex h-14 shrink-0 items-stretch gap-4 pr-4 pl-6 md:pl-8">
           {/* Cinco pestañas: si no caben, se deslizan en vez de partirse. */}
           <nav
-            ref={tabsRef}
+            ref={tabs.ref}
             aria-label={UI.nav.label}
-            className={`flex min-w-0 items-stretch gap-6 overflow-x-auto [scrollbar-width:none] ${
-              tabsOverflow ? "[mask-image:linear-gradient(to_right,black_88%,transparent)]" : ""
-            }`}
+            className={`flex min-w-0 items-stretch gap-6 overflow-x-auto [scrollbar-width:none] ${edgeMask(tabs.edges)}`}
           >
             {NAV.map(({ key, label }) => {
               const active = view === key;
@@ -97,7 +79,7 @@ export function PolarisPanel({
             className="etiqueta my-auto ml-auto flex min-h-9 shrink-0 items-center gap-2 rounded-full border border-trazo px-3 text-niebla transition-colors duration-150 hover:border-crema hover:text-crema"
           >
             <MagnifyingGlass size={13} weight="regular" aria-hidden="true" />
-            <kbd className="hidden font-sans xl:inline">{SHORTCUT}</kbd>
+            <kbd className="hidden font-sans 2xl:inline">{SHORTCUT}</kbd>
           </button>
           <button
             type="button"

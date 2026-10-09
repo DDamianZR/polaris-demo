@@ -1,7 +1,10 @@
+import { useReducedMotion } from "motion/react";
+import { useEffect } from "react";
 import { UI } from "../copy/es";
 import { CHAPTERS } from "../demo/script";
 import { useDemo } from "./DemoContext";
 import { chapterIndex } from "./session";
+import { edgeMask, useScrollEdges } from "./useScrollEdges";
 
 type Props = { orientation: "vertical" | "horizontal"; className?: string };
 
@@ -34,14 +37,30 @@ export function Itinerary({ orientation, className = "" }: Props) {
   const { session, dispatch } = useDemo();
   const index = chapterIndex(session);
   const vertical = orientation === "vertical";
+  const reduce = useReducedMotion();
+  const lane = useScrollEdges<HTMLOListElement>();
+
+  // En horizontal, la parada actual siempre a la vista. Se desliza solo el carril, nunca la
+  // página: cambiar de capítulo desde la portada no te mueve de donde estás.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: `index` es el disparo; la parada se busca en el DOM ya pintado.
+  useEffect(() => {
+    const ol = lane.el;
+    const stop = ol?.querySelector<HTMLElement>('[aria-current="step"]');
+    if (vertical || !ol || !stop) return;
+    const box = ol.getBoundingClientRect();
+    const at = stop.getBoundingClientRect();
+    const left = ol.scrollLeft + at.left - box.left - (box.width - at.width) / 2;
+    ol.scrollTo({ left: Math.max(0, left), behavior: reduce ? "auto" : "smooth" });
+  }, [index, lane.el, vertical, reduce]);
 
   return (
     <nav aria-label={UI.controls.chapters} className={className}>
       <ol
+        ref={lane.ref}
         className={
           vertical
             ? "relative flex flex-col"
-            : "-mx-4 flex items-center gap-1 overflow-x-auto px-4 [mask-image:linear-gradient(to_right,black_88%,transparent)] [scrollbar-width:none] md:mx-0 md:px-0 md:[mask-image:none]"
+            : `-mx-4 flex items-center gap-1 overflow-x-auto px-4 [scrollbar-width:none] md:mx-0 md:px-0 ${edgeMask(lane.edges)}`
         }
       >
         {vertical ? (
