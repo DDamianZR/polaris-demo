@@ -14,7 +14,7 @@ import { DEMO_ID, goToDemo } from "./scroll";
 function Nav() {
   return (
     <header className="mx-auto flex h-[72px] max-w-[1280px] items-center justify-between gap-6 px-6 md:px-10">
-      <a href="#top" aria-label={UI.landing.nav} className="rounded-full">
+      <a href="#top" className="rounded-full">
         <Brand />
       </a>
       <div className="flex items-center gap-6">

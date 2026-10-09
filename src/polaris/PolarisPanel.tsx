@@ -73,7 +73,7 @@ export function PolarisPanel({
           <button
             type="button"
             onClick={onOpenPalette}
-            aria-label={UI.palette.title}
+            aria-label={`${UI.palette.title} (${SHORTCUT})`}
             aria-keyshortcuts="Control+K Meta+K"
             title={`${UI.palette.title} (${SHORTCUT})`}
             className="etiqueta my-auto ml-auto flex min-h-9 shrink-0 items-center gap-2 rounded-full border border-trazo px-3 text-niebla transition-colors duration-150 hover:border-crema hover:text-crema"

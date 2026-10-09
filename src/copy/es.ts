@@ -301,7 +301,8 @@ export const UI = {
     play: "Reproducir el día",
     pause: "Pausar",
     chapters: "Capítulos",
-    goTo: (n: number, title: string) => `Ir al capítulo ${n}: ${title}`,
+    /** Contexto oculto antes de la hora visible: el nombre accesible contiene lo que se ve. */
+    chapterN: (n: number) => `Capítulo ${n}:`,
     position: (n: number, total: number) =>
       `${String(n).padStart(2, "0")} / ${String(total).padStart(2, "0")}`,
     skipDays: "Saltar al viernes",
@@ -447,7 +448,6 @@ export const UI = {
   },
   /** La página alrededor de la demo: beneficios, no tecnología. */
   landing: {
-    nav: "Inicio de la página",
     skip: "Saltar a la demo",
     tryIt: "Pruébalo",
     hero: {

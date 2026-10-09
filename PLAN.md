@@ -153,10 +153,18 @@ Una sola página: la demo es la sección 4 y ocupa la pantalla completa. Todo lo
   - Las sugerencias del chat avisan que hay más.
   - En el cel, la vista gana espacio.
 - [x] **Accesibilidad:** salto a la demo, jerarquía de títulos, teclado completo, focos visibles, reduced motion y lectores de pantalla.
-- [ ] **Revisión final:**
+- [x] **Revisión final:**
   - Se revisa a 375, 768 y 1280 px.
   - Lighthouse de 90 o más en accesibilidad y rendimiento.
   - Una prueba garantiza cero guiones largos en el texto visible.
+- [ ] **Puntaje oficial de rendimiento** con Lighthouse completo (CLI o DevTools). La herramienta que se usó mide todo menos rendimiento.
+
+**Notas de D5:**
+- Lighthouse sobre el build de producción, en local: accesibilidad 100, buenas prácticas 100 y SEO 100, en cel y en escritorio.
+- Rendimiento medido con una traza en condiciones de cel (CPU 4x y Slow 4G): FCP y LCP de 1.9 s, TBT de unos 60 ms y CLS de 0. Con las curvas de Lighthouse eso da alrededor de 95, pero es una estimación.
+- La portada lleva el cerebro en lugar de Today: es el elemento firma de Sinapsis y Today ya vive en la demo. Es el mismo estado: si capturas en la demo, el cerebro de la portada también cambia.
+- El check-in de la landing corre con el motor de la demo, no con un guion aparte.
+- Cada parada del itinerario lleva como nombre accesible lo que se ve (la hora y el título) más el número de capítulo, oculto.
 
 ## Decisiones abiertas (con default)
 

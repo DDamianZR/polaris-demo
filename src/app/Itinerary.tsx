@@ -77,13 +77,13 @@ export function Itinerary({ orientation, className = "" }: Props) {
               <button
                 type="button"
                 title={copy.title}
-                aria-label={UI.controls.goTo(i + 1, copy.title)}
                 aria-current={state === "current" ? "step" : undefined}
                 onClick={() => dispatch({ type: "goTo", index: i })}
                 className={`group flex w-full items-center text-left transition-colors duration-150 ${
                   vertical ? "min-h-9 gap-4" : "min-h-11 gap-2 rounded-full px-3"
                 } ${state === "current" && !vertical ? "border border-trazo" : ""}`}
               >
+                <span className="sr-only">{UI.controls.chapterN(i + 1)} </span>
                 <span className="flex w-3 shrink-0 justify-center">
                   <Marker state={state} />
                 </span>
@@ -94,6 +94,7 @@ export function Itinerary({ orientation, className = "" }: Props) {
                 >
                   {copy.when}
                 </span>
+                {vertical ? null : <span className="sr-only"> {copy.title}</span>}
                 {vertical ? (
                   <span
                     className={`truncate ${
