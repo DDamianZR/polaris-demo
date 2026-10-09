@@ -1,6 +1,6 @@
 # Plan de la demo web de Polaris
 
-**Estado:** D0 ✅ · D1 ✅ · D2 ✅ · D3 ✅ · D4 en curso · **Actualizado:** 2026-10-08 · **Aprobado:** 2026-10-07
+**Estado:** D0 ✅ · D1 ✅ · D2 ✅ · D3 ✅ · D4 ✅ · D5 en curso · **Actualizado:** 2026-10-08 · **Aprobado:** 2026-10-07
 
 ## Objetivo
 
@@ -62,8 +62,8 @@ Medidos con WCAG sobre Midnight `#070A14`:
 | D1 Motor | fixture, engine, script y reloj, con pruebas por capítulo | `npm test` en verde, todavía sin UI | ✅ |
 | D2 Today + Inbox + chat | Estructura responsive y capítulos 1–3 | La captura aparece en Today y el texto libre cae al Inbox | ✅ |
 | D3 Hábitos + check-in + History | Capítulos 4, 7 y 8 | Check-in de 4 pendientes a puro tap y la regla de 3 se ve | ✅ |
-| D4 Orbit + Direction | Capítulos 5 y 6, Orbit con alternativa en lista y el árbol de Direction | La negociación se reproduce completa | ⏳ |
-| D5 Landing + pulido | Secciones de la landing, Ctrl+K, a11y, checklist de diseño y Lighthouse | Se ve bien a 375, 768 y 1280 px. Lighthouse ≥ 90 en a11y y rendimiento. Cero guiones largos visibles | ⬜ |
+| D4 Orbit + Direction | Capítulos 5 y 6, Orbit con alternativa en lista y el árbol de Direction | La negociación se reproduce completa | ✅ |
+| D5 Landing + pulido | Secciones de la landing, Ctrl+K, a11y, checklist de diseño y Lighthouse | Se ve bien a 375, 768 y 1280 px. Lighthouse ≥ 90 en a11y y rendimiento. Cero guiones largos visibles | ⏳ |
 
 Estados: ⬜ sin empezar · ⏳ en curso · ✅ hecha
 
@@ -136,9 +136,31 @@ Aceptada el 2026-10-08 con el rediseño Sinapsis (`docs/diseno.md`): mapa de ide
 - La negociación mueve la tesis del anillo de afuera al de próximos días, y el jueves queda marcado "Muy cargado" (5 h 30 de 5 h).
 - Direction dice los plazos como frase ("Para el viernes") y solo cuenta pasos cuando el proyecto tiene más de uno.
 
+### D5 Landing + pulido
+
+Una sola página: la demo es la sección 4 y ocupa la pantalla completa. Todo lo de arriba y abajo de ella cuenta beneficios, no tecnología.
+
+- [ ] **Landing alrededor de la demo:**
+  - Nav de una línea (72 px o menos): isotipo, wordmark y "Pruébalo".
+  - Portada: "Por fin no tienes que acordarte de todo.", un subtexto de 20 palabras o menos y "Pruébalo". A la derecha va el cerebro con tus ideas en lugar de Today: es el elemento firma de Sinapsis, y Today ya vive en la demo.
+  - "Primero captura. Después organizamos.": la frase cruda se vuelve dos pendientes con fecha y área, y una idea sin fecha cae al Inbox sin preguntas. Es el único momento orquestado de la página.
+  - "Una decisión, no culpa": el check-in de verdad, con el mismo motor, una tarjeta a la vez y la regla de 3.
+  - Lo que Polaris te promete, como lista asimétrica.
+  - Cierre: "Todo en orden.", "Pruébalo", "Vuelve a empezar el día" y el pie.
+- [ ] **Ctrl+K:** una paleta de comandos sobre la demo, con capítulos, vistas y pendientes.
+- [ ] **Pulido de lo visto en D4:**
+  - El conteo del cerebro cabe en una línea a 1280 px.
+  - Las sugerencias del chat avisan que hay más.
+  - En el cel, la vista gana espacio.
+- [ ] **Accesibilidad:** salto a la demo, jerarquía de títulos, teclado completo, focos visibles, reduced motion y lectores de pantalla.
+- [ ] **Revisión final:**
+  - Se revisa a 375, 768 y 1280 px.
+  - Lighthouse de 90 o más en accesibilidad y rendimiento.
+  - Una prueba garantiza cero guiones largos en el texto visible.
+
 ## Decisiones abiertas (con default)
 
-1. **CTA final.** Default: "Pruébalo" y "Vuelve a empezar el día". La lista de espera o el contacto se deciden antes de D5. Una lista de espera necesita backend y guarda correos.
+1. **CTA final.** D5 arranca con el default: "Pruébalo" y "Vuelve a empezar el día". La lista de espera o el contacto quedan para después. Una lista de espera necesita backend y guarda correos.
 2. **Deploy.** Default: solo local hasta D5. Candidato: un repo público aparte, `DDamianZR/polaris-demo`, con GitHub Pages. **Antes de crear un remoto o hacer deploy se pide OK.**
 3. **Idioma.** Solo español mexicano informal; el inglés va al backlog.
 
