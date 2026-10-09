@@ -1,8 +1,6 @@
 import { ChatCircle, DotsThree } from "@phosphor-icons/react";
-import { MotionConfig } from "motion/react";
 import { useEffect, useState } from "react";
-import { Isotipo } from "../brand/Isotipo";
-import { Wordmark } from "../brand/Wordmark";
+import { Brand } from "../brand/Brand";
 import { ChatPanel } from "../chat/ChatPanel";
 import { UI } from "../copy/es";
 import { CHAPTERS } from "../demo/script";
@@ -10,32 +8,17 @@ import { CHAPTER_VIEW, MOBILE_PRIMARY, NAV, type View } from "../polaris/nav";
 import { PolarisPanel } from "../polaris/PolarisPanel";
 import { ChapterBar } from "./ChapterBar";
 import { DayClock } from "./DayClock";
-import { DemoProvider, useDemo } from "./DemoContext";
+import { useDemo } from "./DemoContext";
 import { IdeaMap } from "./IdeaMap";
 import { Itinerary } from "./Itinerary";
 import { chapterIndex } from "./session";
 import { DESKTOP, TABLET, useMediaQuery } from "./useMediaQuery";
 
-export function DemoApp() {
-  return (
-    <DemoProvider>
-      <MotionConfig reducedMotion="user">
-        <Layout />
-      </MotionConfig>
-    </DemoProvider>
-  );
-}
-
-function Brand() {
-  return (
-    <div className="flex items-center gap-3">
-      <Isotipo size={22} title="Polaris" />
-      <Wordmark className="text-[13px] font-medium text-crema" />
-    </div>
-  );
-}
-
-function Layout() {
+/**
+ * La demo: chat y Polaris sincronizados con el reloj. Vive dentro de la landing, en un bloque del
+ * alto de la pantalla, y toma el estado del DemoProvider de la página.
+ */
+export function DemoSection() {
   const { session } = useDemo();
   const desktop = useMediaQuery(DESKTOP);
   const tablet = useMediaQuery(TABLET);
@@ -91,8 +74,7 @@ function Layout() {
 
   if (desktop) {
     return (
-      <div className="grid h-dvh grid-cols-[minmax(360px,30vw)_minmax(0,1fr)] overflow-hidden">
-        <h1 className="sr-only">Un día con Polaris</h1>
+      <div className="grid h-full grid-cols-[minmax(360px,30vw)_minmax(0,1fr)] overflow-hidden">
         <aside className="punteado-r flex min-h-0 flex-col px-8 pt-6 pb-6">
           <Brand />
           <div className="mt-10">
@@ -115,8 +97,7 @@ function Layout() {
 
   if (tablet) {
     return (
-      <div className="flex h-dvh flex-col overflow-hidden">
-        <h1 className="sr-only">Un día con Polaris</h1>
+      <div className="flex h-full flex-col overflow-hidden">
         <header className="punteado-b flex h-14 shrink-0 items-center justify-between px-6">
           <Brand />
           <p className="etiqueta text-niebla">{UI.demoLabel}</p>
@@ -136,8 +117,7 @@ function Layout() {
   }
 
   return (
-    <div className="flex h-dvh flex-col overflow-hidden">
-      <h1 className="sr-only">Un día con Polaris</h1>
+    <div className="flex h-full flex-col overflow-hidden">
       <header className="flex h-12 shrink-0 items-center justify-between px-4">
         <Brand />
         <p className="etiqueta text-niebla">{UI.demoLabel}</p>

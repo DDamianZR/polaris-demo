@@ -415,6 +415,71 @@ export const UI = {
     describe: (ideas: number, connected: number, loose: number) =>
       `Mapa de ideas: ${ideas} ideas, ${connected} conectadas a su zona y ${loose} sueltas.`,
   },
+  /** La página alrededor de la demo: beneficios, no tecnología. */
+  landing: {
+    nav: "Inicio de la página",
+    skip: "Saltar a la demo",
+    tryIt: "Pruébalo",
+    hero: {
+      title: "Por fin no tienes que acordarte de todo.",
+      lead: "Le escribes por Telegram lo que traes en la cabeza. Polaris le pone fecha, lo acomoda y te avisa cuando importa.",
+      how: "Cómo funciona",
+      brain: "Tus ideas de esta semana",
+    },
+    capture: {
+      title: "Primero captura. Después organizamos.",
+      lead: "Escríbelo como te salga, todo en un mensaje. Polaris lo separa y le pone fecha y área. Si no dice cuándo, va al Inbox y no te pregunta nada.",
+      youWrite: "Tú escribes",
+      polarisReads: "Polaris entiende",
+      inbox: "Al Inbox",
+      undated: "Sin fecha",
+      noQuestions: "Sin «¿y a qué hora?». Lo ordenas cuando quieras.",
+      replay: "Verlo otra vez",
+      kinds: { task: "Tarea", reminder: "Recordatorio", idea: "Idea" },
+    },
+    demo: {
+      title: "Un día con Polaris",
+      lead: "Juega un martes completo. Escribe lo que quieras o usa las sugerencias.",
+    },
+    checkin: {
+      title: "Cuando algo no se cumple: una decisión, no culpa.",
+      lead: "A las 21:30 Polaris te pasa lo que quedó pendiente, uno por uno, y lo resuelves a puro tap. Si algo ya se recorrió 3 veces, te pide una fecha dura o soltarlo.",
+      caption: "Pruébalo aquí: es el check-in de verdad",
+      again: "Otra vez",
+    },
+    promises: {
+      title: "Lo que Polaris te promete",
+      items: [
+        {
+          title: "Nada se pierde, aunque se caiga.",
+          body: "Todo lo que escribes se guarda antes de entenderlo. Si algo falla, lo vuelve a intentar solo y al volver te dice qué se pasó.",
+        },
+        {
+          title: "Cero preguntas al capturar.",
+          body: "Si falta la fecha, va al Inbox. Nunca un «¿y a qué hora?».",
+        },
+        {
+          title: "Te escribe solo cuando importa.",
+          body: "El brief de la mañana, el check-in de la noche y los avisos que pediste. Nada más.",
+        },
+        {
+          title: "Lo tuyo se queda en tu compu.",
+          body: "Lo que escribes se guarda y se entiende en tu laptop, no en la nube de alguien más.",
+        },
+        {
+          title: "Tú decides.",
+          body: "Polaris propone con números y tú confirmas. No mueve nada por su cuenta.",
+        },
+      ],
+    },
+    closing: {
+      title: "Todo en orden.",
+      lead: "Así se siente un día con Polaris: lo urgente cerca, lo demás en su lugar y tu cabeza libre.",
+      restart: "Vuelve a empezar el día",
+      footer:
+        "Demo interactiva con datos de ejemplo. Lo que escribes aquí no sale de tu navegador.",
+    },
+  },
   /** `when` es la hora del día en que pasa: el itinerario de la demo. */
   chapters: {
     brief: {
@@ -484,6 +549,6 @@ export const BTN = {
   notNow: "Ahora no",
 } as const;
 
-function capitalize(text: string): string {
+export function capitalize(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }

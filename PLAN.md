@@ -140,7 +140,7 @@ Aceptada el 2026-10-08 con el rediseño Sinapsis (`docs/diseno.md`): mapa de ide
 
 Una sola página: la demo es la sección 4 y ocupa la pantalla completa. Todo lo de arriba y abajo de ella cuenta beneficios, no tecnología.
 
-- [ ] **Landing alrededor de la demo:**
+- [x] **Landing alrededor de la demo:**
   - Nav de una línea (72 px o menos): isotipo, wordmark y "Pruébalo".
   - Portada: "Por fin no tienes que acordarte de todo.", un subtexto de 20 palabras o menos y "Pruébalo". A la derecha va el cerebro con tus ideas en lugar de Today: es el elemento firma de Sinapsis, y Today ya vive en la demo.
   - "Primero captura. Después organizamos.": la frase cruda se vuelve dos pendientes con fecha y área, y una idea sin fecha cae al Inbox sin preguntas. Es el único momento orquestado de la página.
