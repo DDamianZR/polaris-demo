@@ -147,7 +147,7 @@ Una sola página: la demo es la sección 4 y ocupa la pantalla completa. Todo lo
   - "Una decisión, no culpa": el check-in de verdad, con el mismo motor, una tarjeta a la vez y la regla de 3.
   - Lo que Polaris te promete, como lista asimétrica.
   - Cierre: "Todo en orden.", "Pruébalo", "Vuelve a empezar el día" y el pie.
-- [ ] **Ctrl+K:** una paleta de comandos sobre la demo, con capítulos, vistas y pendientes.
+- [x] **Ctrl+K:** una paleta de comandos sobre la demo, con capítulos, vistas y pendientes.
 - [ ] **Pulido de lo visto en D4:**
   - El conteo del cerebro cabe en una línea a 1280 px.
   - Las sugerencias del chat avisan que hay más.

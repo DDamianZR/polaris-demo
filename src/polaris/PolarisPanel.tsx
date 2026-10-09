@@ -1,4 +1,4 @@
-import { Plus } from "@phosphor-icons/react";
+import { MagnifyingGlass, Plus } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
 import { UI } from "../copy/es";
 import { DirectionView } from "./DirectionView";
@@ -8,12 +8,18 @@ import { NAV, type View } from "./nav";
 import { OrbitView } from "./OrbitView";
 import { TodayView } from "./TodayView";
 
+/** En Mac la tecla es ⌘; en lo demás, Ctrl. */
+const SHORTCUT =
+  typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.platform) ? "⌘ K" : "Ctrl K";
+
 type Props = {
   view: View;
   onView: (view: View) => void;
   focusKey: number;
   revealKey: number;
   onQuickCapture: () => void;
+  /** Abre la paleta de Ctrl+K. */
+  onOpenPalette: () => void;
   /** En el cel las pestañas viven en la barra inferior. */
   showTabs: boolean;
   className?: string;
@@ -42,6 +48,7 @@ export function PolarisPanel({
   focusKey,
   revealKey,
   onQuickCapture,
+  onOpenPalette,
   showTabs,
   className = "",
 }: Props) {
@@ -83,10 +90,21 @@ export function PolarisPanel({
           </nav>
           <button
             type="button"
+            onClick={onOpenPalette}
+            aria-label={UI.palette.title}
+            aria-keyshortcuts="Control+K Meta+K"
+            title={`${UI.palette.title} (${SHORTCUT})`}
+            className="etiqueta my-auto ml-auto flex min-h-9 shrink-0 items-center gap-2 rounded-full border border-trazo px-3 text-niebla transition-colors duration-150 hover:border-crema hover:text-crema"
+          >
+            <MagnifyingGlass size={13} weight="regular" aria-hidden="true" />
+            <kbd className="hidden font-sans xl:inline">{SHORTCUT}</kbd>
+          </button>
+          <button
+            type="button"
             onClick={onQuickCapture}
             aria-label={UI.inbox.capture}
             title={UI.inbox.capture}
-            className="etiqueta my-auto ml-auto flex min-h-9 shrink-0 items-center gap-2 rounded-full border border-trazo px-3 text-ceniza transition-colors duration-150 hover:border-crema hover:text-crema 2xl:px-4"
+            className="etiqueta my-auto flex min-h-9 shrink-0 items-center gap-2 rounded-full border border-trazo px-3 text-ceniza transition-colors duration-150 hover:border-crema hover:text-crema 2xl:px-4"
           >
             <Plus size={13} weight="regular" aria-hidden="true" />
             <span className="hidden 2xl:inline">{UI.inbox.capture}</span>

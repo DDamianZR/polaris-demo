@@ -1,16 +1,20 @@
 import { ChatCircle, DotsThree } from "@phosphor-icons/react";
-import { useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { Brand } from "../brand/Brand";
 import { ChatPanel } from "../chat/ChatPanel";
-import { UI } from "../copy/es";
+import { relativeDay, UI } from "../copy/es";
 import { CHAPTERS } from "../demo/script";
+import { dayOf } from "../demo/time";
+import { goToDemo } from "../landing/scroll";
 import { CHAPTER_VIEW, MOBILE_PRIMARY, NAV, type View } from "../polaris/nav";
 import { PolarisPanel } from "../polaris/PolarisPanel";
 import { ChapterBar } from "./ChapterBar";
+import { CommandPalette } from "./CommandPalette";
 import { DayClock } from "./DayClock";
 import { useDemo } from "./DemoContext";
 import { IdeaMap } from "./IdeaMap";
 import { Itinerary } from "./Itinerary";
+import { type Command, viewFor } from "./palette";
 import { chapterIndex } from "./session";
 import { DESKTOP, TABLET, useMediaQuery } from "./useMediaQuery";
 
@@ -19,7 +23,7 @@ import { DESKTOP, TABLET, useMediaQuery } from "./useMediaQuery";
  * alto de la pantalla, y toma el estado del DemoProvider de la página.
  */
 export function DemoSection() {
-  const { session } = useDemo();
+  const { session, dispatch } = useDemo();
   const desktop = useMediaQuery(DESKTOP);
   const tablet = useMediaQuery(TABLET);
   const [view, setView] = useState<View>("today");
@@ -30,6 +34,7 @@ export function DemoSection() {
   const [revealKey, setRevealKey] = useState(0);
   /** El menú "Más" del cel, con las vistas que no caben en la barra. */
   const [moreOpen, setMoreOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
 
   const index = chapterIndex(session);
   useEffect(() => {
@@ -57,6 +62,99 @@ export function DemoSection() {
     setRevealKey((k) => k + 1);
   }
 
+  // Ctrl+K (o ⌘K) desde cualquier parte de la página abre y cierra la paleta.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setPaletteOpen((open) => !open);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  function capture() {
+    openView("inbox");
+    setFocusKey((k) => k + 1);
+  }
+
+  /** Todo lo de la paleta lleva a la demo: si la abriste desde la portada, ahí aterrizas. */
+  const today = dayOf(Math.floor(session.now));
+  const commands: Command[] = [
+    {
+      id: "a-capture",
+      group: "actions",
+      label: UI.palette.capture,
+      keywords: UI.palette.keywords.capture,
+      run: () => {
+        goToDemo();
+        capture();
+      },
+    },
+    {
+      id: "a-play",
+      group: "actions",
+      label: session.playing ? UI.palette.pause : UI.palette.play,
+      run: () => {
+        goToDemo();
+        dispatch({ type: session.playing ? "pause" : "play" });
+      },
+    },
+    {
+      id: "a-restart",
+      group: "actions",
+      label: UI.palette.restart,
+      run: () => {
+        dispatch({ type: "goTo", index: 0 });
+        goToDemo();
+      },
+    },
+    ...NAV.map(
+      ({ key, label }): Command => ({
+        id: `v-${key}`,
+        group: "views",
+        label,
+        keywords: UI.palette.keywords[key],
+        run: () => {
+          openView(key);
+          goToDemo();
+        },
+      }),
+    ),
+    ...CHAPTERS.map(
+      (chapter, i): Command => ({
+        id: `c-${chapter.key}`,
+        group: "chapters",
+        label: UI.chapters[chapter.key].title,
+        hint: UI.chapters[chapter.key].when,
+        run: () => {
+          dispatch({ type: "goTo", index: i });
+          goToDemo();
+        },
+      }),
+    ),
+    ...session.demo.items
+      .filter((item) => item.status === "inbox" || item.status === "active")
+      .map(
+        (item): Command => ({
+          id: `i-${item.id}`,
+          group: "items",
+          label: item.title,
+          hint: [
+            item.area,
+            item.dueDay === null ? UI.inbox.undated : relativeDay(item.dueDay, today),
+          ]
+            .filter(Boolean)
+            .join(" · "),
+          run: () => {
+            openView(viewFor(item, today));
+            goToDemo();
+          },
+        }),
+      ),
+  ];
+
   const panel = (showTabs: boolean, className = "") => (
     <PolarisPanel
       className={className}
@@ -69,11 +167,13 @@ export function DemoSection() {
         setView("inbox");
         setFocusKey((k) => k + 1);
       }}
+      onOpenPalette={() => setPaletteOpen(true)}
     />
   );
 
+  let body: ReactNode;
   if (desktop) {
-    return (
+    body = (
       <div className="grid h-full grid-cols-[minmax(360px,30vw)_minmax(0,1fr)] overflow-hidden">
         <aside className="punteado-r flex min-h-0 flex-col px-8 pt-6 pb-6">
           <Brand />
@@ -84,19 +184,17 @@ export function DemoSection() {
           <Itinerary orientation="vertical" className="punteado-t mt-5 pt-3" />
           <p className="etiqueta mt-4 text-niebla">{UI.demoLabel}</p>
         </aside>
-        <main className="flex min-h-0 min-w-0 flex-col">
+        <div className="flex min-h-0 min-w-0 flex-col">
           <ChapterBar size="large" className="punteado-b px-10 pt-7 pb-6" />
           <div className="grid min-h-0 flex-1 grid-cols-[minmax(320px,26vw)_minmax(0,1fr)]">
             <ChatPanel className="punteado-r flex" />
             {panel(true)}
           </div>
-        </main>
+        </div>
       </div>
     );
-  }
-
-  if (tablet) {
-    return (
+  } else if (tablet) {
+    body = (
       <div className="flex h-full flex-col overflow-hidden">
         <header className="punteado-b flex h-14 shrink-0 items-center justify-between px-6">
           <Brand />
@@ -114,86 +212,97 @@ export function DemoSection() {
         </div>
       </div>
     );
+  } else {
+    body = (
+      <div className="flex h-full flex-col overflow-hidden">
+        <header className="flex h-12 shrink-0 items-center justify-between px-4">
+          <Brand />
+          <p className="etiqueta text-niebla">{UI.demoLabel}</p>
+        </header>
+        <section className="relative flex h-[118px] shrink-0 items-center px-4">
+          <IdeaMap
+            variant="compact"
+            className="pointer-events-none absolute inset-y-0 right-0 w-[56%]"
+          />
+          <div className="relative">
+            <DayClock now={session.now} size="xs" />
+          </div>
+        </section>
+        <ChapterBar size="compact" className="punteado-t px-4 py-3" />
+        <Itinerary orientation="horizontal" className="punteado-t punteado-b px-4" />
+        <div className="flex min-h-0 flex-1">
+          {mobileChat ? <ChatPanel className="flex flex-1" /> : panel(false, "flex-1")}
+        </div>
+        <div className="relative shrink-0">
+          {moreOpen ? (
+            <div className="punteado-t absolute inset-x-0 bottom-full flex flex-col bg-vacio px-4 py-2">
+              {NAV.filter((n) => !MOBILE_PRIMARY.includes(n.key)).map(
+                ({ key, label, icon: Icon }) => (
+                  <button
+                    key={key}
+                    type="button"
+                    aria-current={!mobileChat && view === key ? "page" : undefined}
+                    onClick={() => openView(key)}
+                    className={`etiqueta flex min-h-12 items-center gap-3 ${
+                      !mobileChat && view === key ? "text-crema" : "text-ceniza"
+                    }`}
+                  >
+                    <Icon size={18} weight="light" aria-hidden="true" />
+                    {label}
+                  </button>
+                ),
+              )}
+            </div>
+          ) : null}
+          <nav
+            aria-label={UI.nav.label}
+            className="punteado-t grid grid-cols-4 pb-[env(safe-area-inset-bottom)]"
+          >
+            <TabButton
+              active={mobileChat}
+              label={UI.nav.chat}
+              onClick={() => {
+                setMobileChat(true);
+                setMoreOpen(false);
+              }}
+            >
+              <ChatCircle size={20} weight="light" aria-hidden="true" />
+            </TabButton>
+            {NAV.filter((n) => MOBILE_PRIMARY.includes(n.key)).map(({ key, label, icon: Icon }) => (
+              <TabButton
+                key={key}
+                active={!mobileChat && view === key}
+                label={label}
+                dot={unseen && key === view}
+                onClick={() => openView(key)}
+              >
+                <Icon size={20} weight="light" aria-hidden="true" />
+              </TabButton>
+            ))}
+            <TabButton
+              active={!mobileChat && !MOBILE_PRIMARY.includes(view)}
+              label={UI.nav.more}
+              dot={unseen && !MOBILE_PRIMARY.includes(view)}
+              expanded={moreOpen}
+              onClick={() => setMoreOpen((open) => !open)}
+            >
+              <DotsThree size={20} weight="light" aria-hidden="true" />
+            </TabButton>
+          </nav>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="flex h-full flex-col overflow-hidden">
-      <header className="flex h-12 shrink-0 items-center justify-between px-4">
-        <Brand />
-        <p className="etiqueta text-niebla">{UI.demoLabel}</p>
-      </header>
-      <section className="relative flex h-[118px] shrink-0 items-center px-4">
-        <IdeaMap
-          variant="compact"
-          className="pointer-events-none absolute inset-y-0 right-0 w-[56%]"
-        />
-        <div className="relative">
-          <DayClock now={session.now} size="xs" />
-        </div>
-      </section>
-      <ChapterBar size="compact" className="punteado-t px-4 py-3" />
-      <Itinerary orientation="horizontal" className="punteado-t punteado-b px-4" />
-      <div className="flex min-h-0 flex-1">
-        {mobileChat ? <ChatPanel className="flex flex-1" /> : panel(false, "flex-1")}
-      </div>
-      <div className="relative shrink-0">
-        {moreOpen ? (
-          <div className="punteado-t absolute inset-x-0 bottom-full flex flex-col bg-vacio px-4 py-2">
-            {NAV.filter((n) => !MOBILE_PRIMARY.includes(n.key)).map(
-              ({ key, label, icon: Icon }) => (
-                <button
-                  key={key}
-                  type="button"
-                  aria-current={!mobileChat && view === key ? "page" : undefined}
-                  onClick={() => openView(key)}
-                  className={`etiqueta flex min-h-12 items-center gap-3 ${
-                    !mobileChat && view === key ? "text-crema" : "text-ceniza"
-                  }`}
-                >
-                  <Icon size={18} weight="light" aria-hidden="true" />
-                  {label}
-                </button>
-              ),
-            )}
-          </div>
-        ) : null}
-        <nav
-          aria-label={UI.nav.label}
-          className="punteado-t grid grid-cols-4 pb-[env(safe-area-inset-bottom)]"
-        >
-          <TabButton
-            active={mobileChat}
-            label={UI.nav.chat}
-            onClick={() => {
-              setMobileChat(true);
-              setMoreOpen(false);
-            }}
-          >
-            <ChatCircle size={20} weight="light" aria-hidden="true" />
-          </TabButton>
-          {NAV.filter((n) => MOBILE_PRIMARY.includes(n.key)).map(({ key, label, icon: Icon }) => (
-            <TabButton
-              key={key}
-              active={!mobileChat && view === key}
-              label={label}
-              dot={unseen && key === view}
-              onClick={() => openView(key)}
-            >
-              <Icon size={20} weight="light" aria-hidden="true" />
-            </TabButton>
-          ))}
-          <TabButton
-            active={!mobileChat && !MOBILE_PRIMARY.includes(view)}
-            label={UI.nav.more}
-            dot={unseen && !MOBILE_PRIMARY.includes(view)}
-            expanded={moreOpen}
-            onClick={() => setMoreOpen((open) => !open)}
-          >
-            <DotsThree size={20} weight="light" aria-hidden="true" />
-          </TabButton>
-        </nav>
-      </div>
-    </div>
+    <>
+      {body}
+      <CommandPalette
+        open={paletteOpen}
+        onClose={() => setPaletteOpen(false)}
+        commands={commands}
+      />
+    </>
   );
 }
 

@@ -415,6 +415,34 @@ export const UI = {
     describe: (ideas: number, connected: number, loose: number) =>
       `Mapa de ideas: ${ideas} ideas, ${connected} conectadas a su zona y ${loose} sueltas.`,
   },
+  /** Ctrl+K: buscar y saltar dentro de la demo. */
+  palette: {
+    title: "Buscar en la demo",
+    open: "Buscar",
+    placeholder: "Un pendiente, un capítulo o una vista",
+    results: "Resultados",
+    empty: "Nada con eso. Prueba con otra palabra.",
+    close: "Cerrar",
+    help: "Flechas para moverte, Enter para ir y Esc para cerrar.",
+    groups: {
+      actions: "Acciones",
+      views: "Vistas",
+      chapters: "Capítulos",
+      items: "Pendientes",
+    },
+    capture: "Capturar algo",
+    play: "Reproducir el día",
+    pause: "Pausar el día",
+    restart: "Vuelve a empezar el día",
+    keywords: {
+      capture: "nuevo agregar anotar escribir",
+      today: "hoy ahora brief",
+      inbox: "sueltos sin fecha",
+      orbit: "mapa semana carga urgencia",
+      direction: "objetivos proyectos planes",
+      history: "habitos decisiones semana",
+    },
+  },
   /** La página alrededor de la demo: beneficios, no tecnología. */
   landing: {
     nav: "Inicio de la página",
