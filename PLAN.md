@@ -152,7 +152,7 @@ Una sola página: la demo es la sección 4 y ocupa la pantalla completa. Todo lo
   - El conteo del cerebro cabe en una línea a 1280 px.
   - Las sugerencias del chat avisan que hay más.
   - En el cel, la vista gana espacio.
-- [ ] **Accesibilidad:** salto a la demo, jerarquía de títulos, teclado completo, focos visibles, reduced motion y lectores de pantalla.
+- [x] **Accesibilidad:** salto a la demo, jerarquía de títulos, teclado completo, focos visibles, reduced motion y lectores de pantalla.
 - [ ] **Revisión final:**
   - Se revisa a 375, 768 y 1280 px.
   - Lighthouse de 90 o más en accesibilidad y rendimiento.

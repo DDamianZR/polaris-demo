@@ -68,7 +68,7 @@ export function DirectionView() {
   return (
     <div className="mx-auto flex max-w-[580px] flex-col gap-8 px-6 py-8 md:px-8 md:py-10">
       <header className="flex flex-col gap-3">
-        <h2 className="text-titular font-normal">{UI.direction.title}</h2>
+        <h3 className="text-titular font-normal">{UI.direction.title}</h3>
         <p className="text-entrada font-light text-ceniza">{UI.direction.concept}</p>
       </header>
 
@@ -82,9 +82,9 @@ export function DirectionView() {
             className="punteado-t flex flex-col gap-4 pt-5"
           >
             <p className="etiqueta text-niebla">{UI.direction.goal}</p>
-            <h3 id={`goal-${goal.id}`} className="text-titulo font-normal">
+            <h4 id={`goal-${goal.id}`} className="text-titulo font-normal">
               {goal.title}
-            </h3>
+            </h4>
             {/* Del objetivo cuelgan sus proyectos, unidos por una sinapsis. */}
             <ul className="ml-1 flex flex-col gap-6 border-l border-dashed border-sinapsis pl-5">
               <AnimatePresence initial={false}>

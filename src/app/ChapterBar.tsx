@@ -36,9 +36,9 @@ export function ChapterBar({ size, className = "" }: Props) {
         <p className="etiqueta cifras text-chispa">
           {UI.controls.position(index + 1, CHAPTERS.length)}
         </p>
-        <h2 className={`mt-2 font-normal ${large ? "text-titular" : "text-titulo"}`}>
+        <h3 className={`mt-2 font-normal ${large ? "text-titular" : "text-titulo"}`}>
           {copy?.title}
-        </h2>
+        </h3>
         <p
           className={`mt-2 max-w-[60ch] font-light text-ceniza ${large ? "text-entrada" : "text-cuerpo"}`}
         >

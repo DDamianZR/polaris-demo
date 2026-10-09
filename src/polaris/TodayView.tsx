@@ -20,7 +20,7 @@ export function TodayView({ revealKey = 0 }: { revealKey?: number }) {
   return (
     <div className="mx-auto flex max-w-[580px] flex-col gap-8 px-6 py-8 md:px-8 md:py-10">
       <header className="flex flex-col gap-3">
-        <h2 className="text-titular font-normal">{view.greeting}</h2>
+        <h3 className="text-titular font-normal">{view.greeting}</h3>
         <p className="text-entrada font-light text-ceniza">
           {calm ? UI.today.calm : UI.today.onTrack}
         </p>

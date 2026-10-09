@@ -175,7 +175,7 @@ export function DemoSection() {
   if (desktop) {
     body = (
       <div className="grid h-full grid-cols-[minmax(360px,30vw)_minmax(0,1fr)] overflow-hidden">
-        <aside className="punteado-r flex min-h-0 flex-col px-8 pt-6 pb-6">
+        <div className="punteado-r flex min-h-0 flex-col px-8 pt-6 pb-6">
           <Brand />
           <div className="mt-10">
             <DayClock now={session.now} size="display" />
@@ -183,7 +183,7 @@ export function DemoSection() {
           <IdeaMap variant="full" withStats className="mt-2 min-h-[180px] flex-1" />
           <Itinerary orientation="vertical" className="punteado-t mt-5 pt-3" />
           <p className="etiqueta mt-4 text-niebla">{UI.demoLabel}</p>
-        </aside>
+        </div>
         <div className="flex min-h-0 min-w-0 flex-col">
           <ChapterBar size="large" className="punteado-b px-10 pt-7 pb-6" />
           <div className="grid min-h-0 flex-1 grid-cols-[minmax(320px,26vw)_minmax(0,1fr)]">

@@ -124,8 +124,8 @@ export function ItemRow({
 /** Etiqueta de sección: mayúsculas tenues sobre un punteado que separa la estructura. */
 export function SectionLabel({ id, children }: { id: string; children: string }) {
   return (
-    <h3 id={id} className="etiqueta text-niebla">
+    <h4 id={id} className="etiqueta text-niebla">
       {children}
-    </h3>
+    </h4>
   );
 }

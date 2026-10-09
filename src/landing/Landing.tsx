@@ -43,7 +43,7 @@ export function Landing() {
             e.preventDefault();
             goToDemo();
           }}
-          className="etiqueta sr-only z-50 rounded-full bg-crema px-5 py-3 text-vacio focus:not-sr-only focus:fixed focus:top-4 focus:left-4"
+          className="etiqueta sr-only z-50 rounded-full bg-crema text-vacio focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:px-5 focus:py-3"
         >
           {UI.landing.skip}
         </a>

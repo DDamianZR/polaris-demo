@@ -291,7 +291,7 @@ export function OrbitView({ revealKey = 0 }: { revealKey?: number }) {
   return (
     <div className="mx-auto flex max-w-[620px] flex-col gap-8 px-6 py-8 md:px-8 md:py-10">
       <header className="flex flex-col gap-3">
-        <h2 className="text-titular font-normal">{UI.orbit.title}</h2>
+        <h3 className="text-titular font-normal">{UI.orbit.title}</h3>
         <p className="text-entrada font-light text-ceniza">{UI.orbit.concept}</p>
       </header>
 
